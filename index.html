@@ -3,1568 +3,1880 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A connected IB Chemistry HL organic reaction-route simulation linking structure, reduction, radicals, electron-pair transfer and oxidation control.">
-  <title>Ethanol (CH₃CH₂OH) Reaction Lab · Route Simulation</title>
+  <meta name="description" content="Practise four-, three- and two-step organic reaction routes using the reagents and conditions from your class notes.">
+  <title>Organic Route Challenge · Ethanol Reaction Lab</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2314796f'/%3E%3Cpath d='M25 12v18L14 48q-2 5 4 5h28q6 0 4-5L39 30V12M22 12h20M20 40h24' stroke='white' fill='none' stroke-width='4'/%3E%3C/svg%3E">
+
   <style>
     :root {
-      --paper: #f5f3ec;
-      --paper-deep: #ece9df;
-      --surface: #fffefa;
-      --ink: #102d3c;
-      --muted: #61727a;
-      --line: #d7d8d0;
-      --line-strong: #aeb8b8;
-      --teal: #14796f;
-      --teal-dark: #0b5c55;
-      --teal-soft: #d9ece7;
-      --amber: #c87817;
-      --amber-soft: #f4e4c9;
-      --red: #b2463d;
-      --red-soft: #f7dfdc;
-      --shadow: 0 18px 50px rgba(16, 45, 60, .09);
-      --radius: 20px;
-      --radius-sm: 12px;
-      --mono: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
-      --sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      --serif: Georgia, "Times New Roman", serif;
+      --paper:#f5f3ec;
+      --surface:#fffefa;
+      --ink:#102d3c;
+      --muted:#536770;
+      --line:#d7d8d0;
+      --teal:#14796f;
+      --teal-dark:#0b5c55;
+      --teal-soft:#d9ece7;
+      --amber:#98600e;
+      --amber-soft:#f4e4c9;
+      --red:#a13b33;
+      --red-soft:#f7dfdc;
+      --sans:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;
+      --mono:"Cascadia Mono",Consolas,monospace;
     }
 
-    * { box-sizing: border-box; }
+    * { box-sizing:border-box; }
+    [hidden] { display:none !important; }
 
-    html { min-width: 320px; background: var(--paper); }
+    html {
+      min-width:320px;
+      background:var(--paper);
+    }
 
     body {
-      margin: 0;
-      min-height: 100vh;
-      color: var(--ink);
+      margin:0;
+      color:var(--ink);
+      font:16px/1.6 var(--sans);
       background:
-        linear-gradient(rgba(16, 45, 60, .025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(16, 45, 60, .02) 1px, transparent 1px),
+        linear-gradient(rgba(16,45,60,.022) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(16,45,60,.018) 1px,transparent 1px),
         var(--paper);
-      background-size: 28px 28px;
-      font-family: var(--sans);
-      font-size: 15px;
-      line-height: 1.5;
+      background-size:28px 28px;
     }
 
-    button, input { font: inherit; }
-
-    button { color: inherit; }
-
-    button:focus-visible {
-      outline: 3px solid rgba(20, 121, 111, .28);
-      outline-offset: 3px;
+    button,select {
+      font:inherit;
+      color:inherit;
     }
 
-    .app {
-      width: min(1500px, 100%);
-      min-height: 100vh;
-      margin: 0 auto;
-      background: rgba(245, 243, 236, .82);
+    button,a,select {
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    button {
+      cursor:pointer;
+      transition:background .16s,border-color .16s,box-shadow .16s;
+    }
+
+    button:disabled {
+      cursor:not-allowed;
+      opacity:.5;
+    }
+
+    :focus-visible {
+      outline:3px solid #348fba;
+      outline-offset:4px;
+    }
+
+    .shell {
+      max-width:1260px;
+      margin:auto;
+      padding:0 32px 40px;
     }
 
     .topbar {
-      min-height: 76px;
-      display: grid;
-      grid-template-columns: 280px 1fr auto;
-      align-items: center;
-      gap: 24px;
-      padding: 14px 28px;
-      border-bottom: 1px solid var(--line);
-      backdrop-filter: blur(14px);
-      background: rgba(245, 243, 236, .92);
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+      padding:22px 0 18px;
+      border-bottom:1px solid var(--line);
     }
 
     .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 750;
-      letter-spacing: -.02em;
-      font-size: 18px;
+      display:flex;
+      align-items:center;
+      gap:12px;
     }
 
     .brand-mark {
-      width: 37px;
-      height: 37px;
-      display: grid;
-      place-items: center;
-      border: 1px solid var(--ink);
-      border-radius: 50%;
-      background: var(--surface);
+      width:42px;
+      height:42px;
+      display:grid;
+      place-items:center;
+      border:1px solid var(--ink);
+      border-radius:50%;
+      background:var(--surface);
+      flex-shrink:0;
     }
 
-    .brand-mark svg { width: 23px; height: 23px; }
-
-    .brand-copy { display: grid; line-height: 1.15; }
-    .brand-copy small { margin-top: 4px; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .02em; }
-
-    .progress-wrap { max-width: 580px; width: 100%; justify-self: center; }
-
-    .progress-copy {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 12px;
-      margin-bottom: 7px;
-      font-size: 13px;
-      color: var(--muted);
+    .brand-mark svg {
+      width:26px;
+      height:26px;
     }
 
-    .progress-copy strong { color: var(--ink); font-weight: 700; }
-
-    .progress-track {
-      height: 5px;
-      background: #dfe1da;
-      overflow: hidden;
+    .brand strong {
+      font-size:18px;
+      display:block;
+      letter-spacing:-.025em;
     }
 
-    .progress-bar {
-      height: 100%;
-      width: 0;
-      background: var(--teal);
-      transition: width .35s ease;
+    .brand small {
+      display:block;
+      font-size:12px;
+      color:var(--muted);
     }
 
-    .reset-btn, .icon-btn {
-      border: 1px solid var(--line-strong);
-      background: transparent;
-      border-radius: 999px;
-      min-height: 40px;
-      padding: 8px 14px;
-      display: inline-flex;
-      gap: 8px;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-weight: 650;
-      font-size: 13px;
-      transition: background .18s ease, border-color .18s ease;
+    .completion {
+      color:var(--muted);
+      font-size:14px;
+      white-space:nowrap;
     }
 
-    .reset-btn:hover, .icon-btn:hover { background: var(--surface); border-color: var(--ink); }
-
-    .layout {
-      display: grid;
-      grid-template-columns: 280px minmax(0, 1fr);
-      min-height: calc(100vh - 76px);
+    .completion strong {
+      color:var(--teal-dark);
     }
 
-    .mission-rail {
-      padding: 30px 22px;
-      border-right: 1px solid var(--line);
+    .page-nav {
+      display:flex;
+      gap:8px;
+      margin:24px 0;
     }
 
-    .rail-title {
-      margin: 0 10px 18px;
-      color: var(--muted);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      font-weight: 750;
+    .page-nav a {
+      color:var(--muted);
+      text-decoration:none;
+      border:1px solid transparent;
+      padding:10px 18px;
+      border-radius:999px;
+      font-weight:650;
+      font-size:15px;
     }
 
-    .mission-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: grid;
-      gap: 7px;
+    .page-nav a:hover {
+      background:rgba(255,254,250,.7);
     }
 
-    .mission-button {
-      width: 100%;
-      border: 0;
-      border-left: 3px solid transparent;
-      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-      background: transparent;
-      padding: 13px 12px 13px 14px;
-      display: grid;
-      grid-template-columns: 31px minmax(0, 1fr) 18px;
-      align-items: center;
-      gap: 10px;
-      text-align: left;
-      cursor: pointer;
-      transition: background .18s ease, border-color .18s ease;
+    .page-nav a[aria-current="page"] {
+      color:var(--teal-dark);
+      border-color:var(--teal);
+      background:var(--teal-soft);
     }
 
-    .mission-button:hover:not(:disabled) { background: rgba(255, 254, 250, .7); }
-    .mission-button[aria-current="step"] { background: var(--surface); border-left-color: var(--teal); box-shadow: 0 6px 18px rgba(16, 45, 60, .05); }
-    .mission-button:disabled { cursor: not-allowed; opacity: .48; }
-
-    .mission-number {
-      width: 29px;
-      height: 29px;
-      border: 1px solid var(--line-strong);
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      font-family: var(--mono);
-      font-size: 12px;
-      background: var(--paper);
+    .eyebrow {
+      font-size:12px;
+      color:var(--teal-dark);
+      font-weight:750;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+      margin:0 0 9px;
     }
 
-    .mission-button[aria-current="step"] .mission-number,
-    .mission-button.is-complete .mission-number {
-      border-color: var(--teal);
-      background: var(--teal);
-      color: #fff;
+    h1 {
+      font-size:clamp(28px,3.2vw,42px);
+      letter-spacing:-.035em;
+      line-height:1.3;
+      margin:0;
+      max-width:1000px;
     }
 
-    .mission-name { display: block; font-weight: 700; font-size: 14px; line-height: 1.25; }
-    .mission-topic { display: block; color: var(--muted); font-size: 11px; margin-top: 3px; }
-
-    .status-icon { width: 16px; height: 16px; color: var(--muted); }
-    .mission-button.is-complete .status-icon { color: var(--teal); }
-
-    .rail-footer {
-      margin: 28px 10px 0;
-      padding-top: 20px;
-      border-top: 1px solid var(--line);
-      color: var(--muted);
-      font-size: 12px;
+    h1 em {
+      font-style:normal;
+      color:var(--teal);
     }
 
-    .rail-footer strong { color: var(--ink); display: block; margin-bottom: 4px; }
-
-    .stage {
-      padding: clamp(22px, 3vw, 44px);
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 300px;
-      gap: clamp(20px, 2.5vw, 34px);
-      align-items: start;
+    .mission-description {
+      margin:10px 0 0;
+      color:var(--muted);
     }
 
-    .workspace { min-width: 0; }
-
-    .mission-heading { margin-bottom: 24px; }
-
-    .mission-kicker {
-      margin: 0 0 6px;
-      color: var(--teal-dark);
-      font-family: var(--mono);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      font-weight: 700;
+    .challenge-picker {
+      display:flex;
+      gap:10px;
+      margin:0 0 20px;
     }
 
-    .mission-heading h1 {
-      margin: 0;
-      font-family: var(--serif);
-      font-size: clamp(30px, 3.2vw, 49px);
-      line-height: 1.05;
-      letter-spacing: -.035em;
-      font-weight: 500;
+    .challenge-picker button {
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:var(--surface);
+      text-align:left;
+      padding:12px 18px;
+      flex:1;
+      max-width:350px;
     }
 
-    .mission-heading p {
-      max-width: 720px;
-      margin: 10px 0 0;
-      color: var(--muted);
-      font-size: 15px;
+    .challenge-picker button[aria-pressed="true"] {
+      border-color:var(--teal);
+      box-shadow:inset 0 0 0 1px var(--teal);
+      background:var(--teal-soft);
     }
 
-    .bench {
-      position: relative;
-      min-height: 560px;
-      border: 1px solid var(--line-strong);
-      border-radius: var(--radius);
-      background:
-        linear-gradient(rgba(20, 121, 111, .035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(20, 121, 111, .035) 1px, transparent 1px),
-        var(--surface);
-      background-size: 24px 24px;
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      padding: clamp(24px, 3.5vw, 46px);
+    .challenge-picker strong,
+    .challenge-picker small {
+      display:block;
     }
 
-    .bench::before {
-      content: "";
-      position: absolute;
-      inset: 12px;
-      border: 1px solid rgba(16, 45, 60, .07);
-      border-radius: 13px;
-      pointer-events: none;
+    .challenge-picker small {
+      font-size:14px;
+      color:var(--muted);
     }
 
-    .bench-content { position: relative; z-index: 1; }
-
-    .bench-label {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--line);
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 12px;
+    .challenge-picker .check {
+      float:right;
+      color:var(--teal-dark);
+      font-weight:700;
     }
 
-    .bench-label strong { color: var(--ink); }
-
-    .question {
-      margin: 28px 0 22px;
-      max-width: 720px;
-      font-family: var(--serif);
-      font-size: clamp(21px, 2.2vw, 30px);
-      line-height: 1.25;
-      font-weight: 500;
+    .route-panel {
+      margin-top:24px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:var(--surface);
+      padding:20px 24px;
     }
 
-    .molecule-stage {
-      min-height: 180px;
-      display: grid;
-      place-items: center;
-      margin: 8px 0 26px;
-      position: relative;
+    .section-top {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:16px;
     }
 
-    .molecule {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0;
-      font-family: var(--mono);
-      font-size: clamp(26px, 4vw, 52px);
-      font-weight: 700;
-      letter-spacing: -.04em;
-      filter: drop-shadow(0 10px 15px rgba(16,45,60,.08));
+    .section-top h2 {
+      font-size:16px;
+      margin:0;
     }
 
-    .atom {
-      width: 1.38em;
-      height: 1.38em;
-      display: grid;
-      place-items: center;
-      background: var(--surface);
-      border: 2px solid var(--ink);
-      border-radius: 50%;
+    .count-pill {
+      background:var(--teal-soft);
+      color:var(--teal-dark);
+      border-radius:999px;
+      padding:4px 12px;
+      font-size:14px;
+      font-weight:700;
     }
 
-    .atom.oxygen { color: var(--red); border-color: var(--red); background: #fff7f5; }
-    .atom.hydrogen { width: 1.15em; height: 1.15em; font-size: .78em; color: var(--amber); border-color: var(--amber); }
-
-    .bond {
-      width: clamp(26px, 4vw, 58px);
-      height: 2px;
-      background: var(--ink);
-      position: relative;
+    .route-scroll {
+      overflow-x:auto;
+      padding:4px 1px 8px;
     }
 
-    .bond.double::after { content: ""; position: absolute; left: 0; right: 0; top: 7px; height: 2px; background: currentColor; }
-
-    .formula-caption {
-      position: absolute;
-      bottom: 0;
-      font-family: var(--mono);
-      color: var(--muted);
-      font-size: 13px;
-      letter-spacing: .04em;
-    }
-
-    .choices { display: grid; gap: 10px; }
-    .choices.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .choices.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-
-    .choice {
-      min-height: 58px;
-      border: 1px solid var(--line-strong);
-      border-radius: var(--radius-sm);
-      background: rgba(255, 254, 250, .86);
-      padding: 12px 14px;
-      text-align: left;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      font-weight: 680;
-      transition: transform .18s ease, border-color .18s ease, background .18s ease;
-    }
-
-    .choice:hover { transform: translateY(-1px); border-color: var(--ink); }
-    .choice[aria-pressed="true"] { border-color: var(--teal); background: var(--teal-soft); box-shadow: 0 0 0 1px var(--teal); }
-    .choice.is-correct { border-color: var(--teal); background: var(--teal-soft); }
-    .choice.is-wrong { border-color: var(--red); background: var(--red-soft); }
-
-    .choice-marker {
-      flex: 0 0 auto;
-      width: 20px;
-      height: 20px;
-      border: 1px solid var(--line-strong);
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: var(--surface);
-    }
-
-    .choice[aria-pressed="true"] .choice-marker { border: 6px solid var(--teal); }
-
-    .choice small { display: block; color: var(--muted); font-weight: 500; margin-top: 2px; }
-    .choice code { font-family: var(--mono); font-size: 14px; }
-
-    .lab-notes {
-      position: sticky;
-      top: 102px;
-      border-top: 3px solid var(--ink);
-      background: var(--amber-soft);
-      padding: 22px;
-      box-shadow: 10px 12px 0 rgba(16,45,60,.07);
-      transform: rotate(.35deg);
-    }
-
-    .notes-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding-bottom: 13px;
-      border-bottom: 1px solid rgba(16, 45, 60, .25);
-    }
-
-    .notes-header h2 { margin: 0; font-family: var(--serif); font-size: 25px; font-weight: 600; }
-
-    .notes-icon { width: 25px; height: 25px; }
-
-    .note-section { margin-top: 20px; }
-    .note-section h3 { margin: 0 0 7px; font-size: 11px; text-transform: uppercase; letter-spacing: .12em; }
-    .note-section p { margin: 0; color: #374d55; font-size: 13px; }
-
-    .feedback {
-      min-height: 64px;
-      padding: 12px 0 0;
-      margin-top: 16px;
-      border-top: 1px dashed rgba(16, 45, 60, .28);
-      color: #374d55;
-      font-size: 13px;
-    }
-
-    .feedback.success { color: var(--teal-dark); font-weight: 650; }
-    .feedback.error { color: var(--red); font-weight: 650; }
-
-    .primary-btn {
-      width: 100%;
-      min-height: 48px;
-      margin-top: 18px;
-      border: 1px solid var(--ink);
-      border-radius: 10px;
-      background: var(--ink);
-      color: white;
-      font-weight: 750;
-      cursor: pointer;
-      transition: transform .18s ease, background .18s ease;
-    }
-
-    .primary-btn:hover:not(:disabled) { transform: translateY(-1px); background: #1a4154; }
-    .primary-btn:disabled { opacity: .5; cursor: not-allowed; }
-
-    .secondary-btn {
-      min-height: 40px;
-      border: 1px solid var(--line-strong);
-      background: var(--surface);
-      border-radius: 10px;
-      padding: 8px 13px;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .secondary-btn:hover { border-color: var(--ink); }
-
-    .spectra-tabs {
-      display: flex;
-      gap: 4px;
-      border-bottom: 1px solid var(--line);
-      margin-bottom: 12px;
-    }
-
-    .tab-btn {
-      border: 0;
-      border-bottom: 3px solid transparent;
-      background: transparent;
-      padding: 10px 15px;
-      font-weight: 750;
-      font-size: 13px;
-      cursor: pointer;
-    }
-
-    .tab-btn[aria-selected="true"] { color: var(--teal-dark); border-bottom-color: var(--teal); }
-
-    .spectrum-wrap {
-      background: rgba(255,255,255,.65);
-      border: 1px solid var(--line);
-      padding: 10px 10px 2px;
-      margin-bottom: 20px;
-    }
-
-    .spectrum { width: 100%; height: auto; display: block; }
-    .spectrum text { fill: var(--muted); font: 11px var(--mono); }
-    .spectrum .axis { stroke: var(--ink); stroke-width: 1.5; }
-    .spectrum .grid { stroke: var(--line); stroke-width: 1; }
-    .spectrum .trace { stroke: var(--teal); stroke-width: 3; fill: none; vector-effect: non-scaling-stroke; }
-    .spectrum .peak { stroke: var(--teal); stroke-width: 4; vector-effect: non-scaling-stroke; }
-    .spectrum .annotation { fill: var(--ink); font-weight: 700; }
-
-    .apparatus-stage {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items: center;
-      gap: 15px;
-      min-height: 180px;
-      margin: 5px 0 18px;
-    }
-
-    .flask {
-      width: 100%;
-      max-width: 150px;
-      justify-self: center;
-      color: var(--ink);
-    }
-
-    .flask .liquid { fill: var(--teal-soft); stroke: none; }
-    .reaction-arrow { min-width: 100px; text-align: center; font-family: var(--mono); }
-    .reaction-arrow .conditions { color: var(--amber); font-size: 12px; font-weight: 700; display: block; margin-bottom: 2px; }
-    .reaction-arrow .line { display: block; height: 2px; background: var(--ink); position: relative; }
-    .reaction-arrow .line::after { content: ""; position: absolute; right: -1px; top: -4px; border-left: 8px solid var(--ink); border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
-
-    .equation {
-      font-family: var(--mono);
-      font-size: clamp(16px, 2vw, 23px);
-      text-align: center;
-      background: rgba(217, 236, 231, .45);
-      border-left: 3px solid var(--teal);
-      padding: 14px;
-      margin: 0 0 18px;
-    }
-
-    .reaction-sequence {
-      display: grid;
-      gap: 8px;
-      margin: 18px 0;
-      min-height: 126px;
-    }
-
-    .step-card {
-      width: 100%;
-      border: 1px solid var(--line-strong);
-      border-radius: 10px;
-      background: var(--surface);
-      padding: 11px 13px;
-      display: grid;
-      grid-template-columns: 34px minmax(0, 1fr) auto;
-      gap: 11px;
-      align-items: center;
-      text-align: left;
-      cursor: pointer;
-    }
-
-    .step-card:hover { border-color: var(--ink); }
-    .step-card.is-used { opacity: .42; cursor: not-allowed; }
-    .step-index { font-family: var(--mono); color: var(--muted); }
-    .step-equation { font-family: var(--mono); font-size: 13px; }
-    .step-type { color: var(--muted); font-size: 11px; }
-
-    .sequence-slots {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0,1fr));
-      gap: 7px;
-      margin-bottom: 18px;
-    }
-
-    .sequence-slot {
-      min-height: 66px;
-      border: 1px dashed var(--line-strong);
-      background: rgba(255,255,255,.5);
-      padding: 8px;
-      font-family: var(--mono);
-      font-size: 11px;
-      display: grid;
-      place-items: center;
-      text-align: center;
-    }
-
-    .mechanism-scene {
-      min-height: 190px;
-      display: grid;
-      grid-template-columns: auto 1fr auto 1fr auto;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin: 10px auto 24px;
-      font-family: var(--mono);
-      font-size: clamp(16px, 2.2vw, 26px);
-      position: relative;
-    }
-
-    .species {
-      min-width: 64px;
-      padding: 13px 12px;
-      border: 1px solid var(--line-strong);
-      background: var(--surface);
-      text-align: center;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: border-color .18s ease, background .18s ease;
-    }
-
-    .species:hover { border-color: var(--teal); }
-    .species.is-selected { background: var(--teal-soft); border-color: var(--teal); box-shadow: 0 0 0 2px rgba(20,121,111,.18); }
-    .substrate { padding: 16px 14px; background: rgba(255,255,255,.75); border-bottom: 2px solid var(--ink); text-align: center; white-space: nowrap; }
-    .plus { color: var(--muted); }
-
-    .curly-arrow {
-      width: 84px;
-      height: 64px;
-      overflow: visible;
-      color: var(--teal);
-      justify-self: center;
-    }
-
-    .curly-arrow path { fill: none; stroke: currentColor; stroke-width: 2.8; stroke-linecap: round; }
-
-    .mini-callout {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin: 16px 0;
-      padding: 12px 14px;
-      border-left: 3px solid var(--amber);
-      background: rgba(244, 228, 201, .55);
-      color: #43545b;
-      font-size: 13px;
-    }
-
-    .mini-callout strong { color: var(--ink); }
-
-    .learn-card {
-      display: grid;
-      grid-template-columns: 42px 1fr;
-      gap: 13px;
-      align-items: start;
-      margin: 18px 0 8px;
-      padding: 15px 17px;
-      border-left: 4px solid var(--teal);
-      border-radius: 0 12px 12px 0;
-      background: rgba(217, 236, 231, .58);
-    }
-
-    .learn-card .learn-icon {
-      width: 36px;
-      height: 36px;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      background: var(--surface);
-      color: var(--teal-dark);
-      font-size: 19px;
-      font-weight: 800;
-      box-shadow: 0 5px 14px rgba(16,45,60,.08);
-    }
-
-    .learn-card strong { display: block; margin-bottom: 3px; color: var(--ink); font-size: 14px; }
-    .learn-card p { margin: 0; color: #374d55; font-size: 14px; }
-
-    .formula-big {
-      padding: 30px 14px;
-      text-align: center;
-      font-family: var(--mono);
-      font-size: clamp(32px, 5.2vw, 66px);
-      font-weight: 800;
-      letter-spacing: -.055em;
-    }
-
-    .formula-big .carbon { color: #2167d5; }
-    .formula-big .oxygen { color: #c83c34; }
-    .formula-big sub { font-size: .48em; vertical-align: -.35em; }
-
-    .route-strip {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: clamp(8px, 1.7vw, 18px);
-      margin: 18px 0 26px;
-      font-family: var(--mono);
-      font-size: clamp(14px, 2vw, 21px);
-      font-weight: 750;
-      text-align: center;
-    }
-
-    .route-strip .route-item { padding: 13px 15px; border: 1px solid var(--line); border-radius: 11px; background: var(--surface); }
-    .route-strip .route-arrow { color: var(--teal); font-size: 24px; }
-    .route-strip .focus { border-color: var(--teal); background: var(--teal-soft); }
-
-    .electron-demo {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 12px;
-      margin: 18px 0 26px;
-    }
-
-    .electron-card { padding: 18px; border: 1px solid var(--line); border-radius: 13px; background: rgba(255,254,250,.9); }
-    .electron-card strong { display: block; margin-bottom: 7px; font-size: 15px; }
-    .electron-card .symbol { display: block; margin-bottom: 8px; color: var(--teal-dark); font-family: var(--mono); font-size: 30px; font-weight: 800; }
-    .electron-card p { margin: 0; color: var(--muted); font-size: 13px; }
-
-    .hint-btn { width: 100%; margin-top: 10px; background: rgba(255,255,255,.52); }
-
-    .tutor-figure { display: grid; grid-template-columns: 82px 1fr; gap: 11px; align-items: center; margin: 16px 0 0; padding-top: 14px; border-top: 1px dashed rgba(16,45,60,.28); }
-    .tutor-figure img { width: 82px; height: 82px; object-fit: cover; border-radius: 14px; background: #fff; }
-    .tutor-figure figcaption { color: #374d55; font-size: 12px; line-height: 1.45; }
-
-    .journey-map {
-      display: flex;
-      align-items: stretch;
-      gap: 6px;
-      margin: 18px 0 24px;
-      padding: 10px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: rgba(245, 243, 236, .64);
-      overflow-x: auto;
-      scrollbar-width: thin;
+    .route-track {
+      display:flex;
+      align-items:center;
+      min-width:640px;
     }
 
     .route-node {
-      min-width: 104px;
-      flex: 1 0 104px;
-      padding: 11px 10px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: rgba(255, 254, 250, .76);
-      text-align: center;
-      transition: border-color .2s ease, background .2s ease, transform .2s ease;
+      flex:1;
+      min-width:0;
+      text-align:center;
+      padding:14px 8px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:var(--paper);
     }
 
-    .route-node .route-formula { display: block; font-family: var(--mono); font-size: 14px; font-weight: 800; white-space: nowrap; }
-    .route-node:last-child .route-formula { font-size: 11px; line-height: 1.2; white-space: normal; }
-    .route-node .route-name { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .08em; }
-    .route-node.is-complete { border-color: rgba(20,121,111,.55); background: rgba(217,236,231,.55); }
-    .route-node.is-current { border-color: var(--teal); background: var(--teal-soft); box-shadow: 0 0 0 1px var(--teal); transform: translateY(-2px); }
-    .route-node.is-target { border-color: var(--amber); background: var(--amber-soft); }
-    .route-node.is-locked { opacity: .46; }
-
-    .route-link { flex: 0 0 14px; align-self: center; color: var(--line-strong); }
-    .route-link svg { width: 14px; height: 14px; display: block; }
-    .route-link.is-complete { color: var(--teal); }
-
-    .operation-brief {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      align-items: flex-start;
-      margin-bottom: 18px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid var(--line);
+    .route-node .formula {
+      font:700 18px/1.4 var(--mono);
+      display:block;
     }
 
-    .operation-brief strong { display: block; color: var(--ink); font-size: 15px; }
-    .operation-brief span { color: var(--muted); font-size: 12px; }
-    .sample-state { flex: 0 0 auto; color: var(--teal-dark); font-family: var(--mono); font-size: 12px; font-weight: 750; }
-
-    .structure-inspector {
-      display: grid;
-      place-items: center;
-      min-height: 210px;
-      margin: 10px 0 22px;
-      padding: 24px;
-      border: 1px dashed var(--line-strong);
-      border-radius: 15px;
-      background: rgba(255,255,255,.55);
+    .route-node small {
+      display:block;
+      color:var(--muted);
+      font-size:12px;
+      margin-top:4px;
     }
 
-    .inspect-formula { display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: clamp(29px, 4.2vw, 54px); font-weight: 800; }
-    .feature-btn { border: 1px solid transparent; border-radius: 10px; background: transparent; padding: 10px 12px; cursor: pointer; transition: background .18s ease, border-color .18s ease, transform .18s ease; }
-    .feature-btn:hover { border-color: var(--line-strong); background: var(--surface); transform: translateY(-1px); }
-    .feature-btn[aria-pressed="true"] { border-color: var(--teal); background: var(--teal-soft); box-shadow: 0 0 0 1px var(--teal); }
-    .feature-bond { position: relative; width: clamp(56px, 7vw, 94px); height: 46px; }
-    .feature-bond::before, .feature-bond::after { content: ""; position: absolute; left: 12px; right: 12px; height: 3px; border-radius: 2px; background: currentColor; }
-    .feature-bond::before { top: 17px; }
-    .feature-bond::after { top: 27px; }
-    .inspect-caption { margin-top: 20px; color: var(--muted); font-size: 12px; text-align: center; }
-
-    .reactor-layout { display: grid; grid-template-columns: minmax(200px, .9fr) minmax(280px, 1.25fr); gap: 18px; align-items: stretch; }
-    .reaction-chamber { position: relative; min-height: 240px; display: grid; place-items: center; padding: 24px; border: 1px solid var(--line-strong); border-radius: 16px; background: rgba(255,255,255,.62); overflow: hidden; }
-    .reaction-chamber::after { content: ""; position: absolute; inset: 14px; border: 1px solid rgba(20,121,111,.11); border-radius: 11px; pointer-events: none; }
-    .reaction-chamber.is-active { border-color: var(--teal); box-shadow: inset 0 0 35px rgba(20,121,111,.09); }
-    .sample-formula { position: relative; z-index: 1; font-family: var(--mono); font-size: clamp(24px, 3.2vw, 40px); font-weight: 850; text-align: center; }
-    .sample-formula small { display: block; margin-top: 8px; color: var(--muted); font-family: var(--sans); font-size: 11px; font-weight: 650; text-transform: uppercase; letter-spacing: .1em; }
-
-    .control-bank { display: grid; gap: 14px; align-content: start; }
-    .control-group { padding: 14px; border: 1px solid var(--line); border-radius: 13px; background: rgba(255,254,250,.78); }
-    .control-group > strong { display: block; margin-bottom: 9px; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; }
-    .control-options { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 7px; }
-    .control-options.two { grid-template-columns: repeat(2, minmax(0,1fr)); }
-    .control-option { min-height: 50px; border: 1px solid var(--line-strong); border-radius: 9px; background: var(--surface); padding: 8px 9px; cursor: pointer; font-family: var(--mono); font-size: 12px; font-weight: 750; transition: border-color .18s ease, background .18s ease, transform .18s ease; }
-    .control-option:hover { transform: translateY(-1px); border-color: var(--ink); }
-    .control-option[aria-pressed="true"], .control-option.is-selected { border-color: var(--teal); background: var(--teal-soft); box-shadow: 0 0 0 1px var(--teal); }
-    .control-option small { display: block; margin-top: 3px; color: var(--muted); font-family: var(--sans); font-size: 10px; font-weight: 600; }
-
-    .uv-switch { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--surface); padding: 12px 14px; cursor: pointer; font-weight: 750; }
-    .switch-track { width: 44px; height: 24px; padding: 3px; border-radius: 999px; background: var(--line-strong); transition: background .18s ease; }
-    .switch-knob { width: 18px; height: 18px; border-radius: 50%; background: white; box-shadow: 0 2px 5px rgba(16,45,60,.2); transition: transform .18s ease; }
-    .uv-switch[aria-pressed="true"] .switch-track { background: var(--amber); }
-    .uv-switch[aria-pressed="true"] .switch-knob { transform: translateX(20px); }
-
-    .chain-meter { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin: 14px 0; }
-    .chain-step { padding: 9px 7px; border-bottom: 3px solid var(--line); color: var(--muted); font-size: 11px; text-align: center; }
-    .chain-step.is-complete { border-color: var(--teal); color: var(--teal-dark); }
-    .chain-step.is-active { border-color: var(--amber); color: var(--ink); font-weight: 750; }
-
-    .equation-tray { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; margin-top: 12px; }
-    .equation-card { min-height: 66px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--surface); padding: 10px; cursor: pointer; text-align: left; font-family: var(--mono); font-size: 12px; line-height: 1.35; }
-    .equation-card:hover { border-color: var(--ink); }
-    .equation-card.is-used { border-color: var(--teal); background: var(--teal-soft); opacity: .7; }
-    .equation-card strong { display: block; font-size: 11px; }
-    .equation-card small { display: block; margin-top: 4px; color: var(--muted); font-family: var(--sans); font-size: 10px; }
-    .loaded-sequence { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 0; }
-    .sequence-entry { min-height: 50px; display: grid; place-items: center; padding: 8px; border: 1px dashed var(--line-strong); border-radius: 9px; color: var(--muted); font-family: var(--mono); font-size: 11px; text-align: center; }
-    .sequence-entry.is-filled { border-style: solid; border-color: var(--teal); color: var(--ink); background: rgba(217,236,231,.42); }
-
-    .mechanism-board { margin-top: 14px; padding: 22px; border: 1px solid var(--line-strong); border-radius: 15px; background: rgba(255,255,255,.62); }
-    .mechanism-line { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; font-family: var(--mono); font-size: clamp(17px, 2.3vw, 25px); font-weight: 750; }
-    .electron-node { border: 1px solid var(--line-strong); border-radius: 9px; background: var(--surface); padding: 9px 11px; cursor: pointer; font-family: var(--mono); font-size: 13px; font-weight: 750; }
-    .electron-node[aria-pressed="true"] { border-color: var(--amber); background: var(--amber-soft); }
-    .electron-node.is-complete { border-color: var(--teal); background: var(--teal-soft); color: var(--teal-dark); }
-    .arrow-ledger { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; margin-top: 16px; }
-    .arrow-record { padding: 10px; border-left: 3px solid var(--line-strong); background: rgba(245,243,236,.72); color: var(--muted); font-size: 11px; }
-    .arrow-record.is-complete { border-color: var(--teal); color: var(--ink); }
-
-    .target-order { margin-bottom: 14px; padding: 13px 15px; border-left: 4px solid var(--amber); background: rgba(244,228,201,.46); }
-    .target-order strong { display: block; margin-bottom: 3px; font-size: 14px; }
-    .target-order span { color: var(--muted); font-size: 12px; }
-
-    .lab-notes .hint-btn:disabled { opacity: .48; cursor: default; }
-
-    .stage-counter {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 11px;
+    .route-node.future {
+      border-style:dashed;
+      background:transparent;
     }
 
-    .stage-dots { display: flex; gap: 5px; }
-    .stage-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--line-strong); }
-    .stage-dot.is-active, .stage-dot.is-complete { background: var(--teal); }
-
-    .victory {
-      text-align: center;
-      min-height: 470px;
-      display: grid;
-      place-items: center;
-      padding: 30px;
+    .route-node.future .formula {
+      color:#8b989c;
+      font-weight:400;
     }
 
-    .victory-inner { max-width: 600px; }
-    .victory-mark {
-      width: 110px;
-      height: 110px;
-      margin: 0 auto 24px;
-      border-radius: 50%;
-      border: 2px solid var(--teal);
-      background: var(--teal-soft);
-      display: grid;
-      place-items: center;
-      color: var(--teal-dark);
+    .route-node.current {
+      border-color:var(--teal);
+      box-shadow:inset 0 0 0 1px var(--teal);
+      background:var(--teal-soft);
     }
 
-    .victory-mark svg { width: 58px; height: 58px; }
-    .victory h2 { margin: 0; font: 500 clamp(34px,5vw,58px)/1.05 var(--serif); letter-spacing: -.04em; }
-    .victory p { color: var(--muted); max-width: 520px; margin: 15px auto 25px; }
-    .victory-summary { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 18px; font-family: var(--mono); font-size: 12px; color: var(--teal-dark); }
-
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 26px;
-      transform: translate(-50%, 20px);
-      opacity: 0;
-      pointer-events: none;
-      z-index: 100;
-      background: var(--ink);
-      color: white;
-      border-radius: 10px;
-      padding: 11px 16px;
-      box-shadow: var(--shadow);
-      font-size: 13px;
-      transition: opacity .2s ease, transform .2s ease;
+    .route-node.target {
+      border-color:#c7984e;
+      background:var(--amber-soft);
     }
 
-    .toast.is-visible { opacity: 1; transform: translate(-50%, 0); }
-
-    @media (min-width: 761px) and (max-width: 1350px) {
-      .journey-map { gap: 3px; padding: 8px; overflow: hidden; }
-      .route-node { min-width: 0; flex: 1 1 0; padding: 8px 4px; }
-      .route-node .route-formula { font-size: 11px; line-height: 1.2; white-space: normal; }
-      .route-node .route-name { font-size: 8px; letter-spacing: .035em; }
-      .route-link { flex-basis: 10px; }
-      .route-link svg { width: 11px; height: 11px; }
+    .route-link {
+      color:#839591;
+      flex:0 0 26px;
+      text-align:center;
+      font-size:20px;
     }
 
-    @media (max-width: 1100px) {
-      .topbar { grid-template-columns: 240px 1fr auto; }
-      .layout { grid-template-columns: 230px minmax(0,1fr); }
-      .stage { grid-template-columns: 1fr; }
-      .lab-notes { position: static; transform: none; max-width: none; }
+    .instructions {
+      display:flex;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:10px 22px;
+      margin:24px 0 16px;
     }
 
-    @media (max-width: 760px) {
-      .topbar { position: static; grid-template-columns: 1fr auto; padding: 13px 16px; min-height: 70px; }
-      .brand { font-size: 16px; }
-      .progress-wrap { grid-column: 1 / -1; grid-row: 2; max-width: none; }
-      .reset-label { display: none; }
-      .layout { display: block; }
-      .mission-rail { border-right: 0; border-bottom: 1px solid var(--line); padding: 12px 14px; overflow-x: auto; }
-      .mission-rail { scrollbar-width: none; }
-      .mission-rail::-webkit-scrollbar { display: none; }
-      .rail-title, .rail-footer { display: none; }
-      .mission-list { display: flex; width: max-content; gap: 6px; }
-      .mission-button { width: 166px; padding: 9px 8px; border-left: 0; border-bottom: 3px solid transparent; border-radius: 10px 10px 0 0; grid-template-columns: 25px 1fr; }
-      .mission-button[aria-current="step"] { border-bottom-color: var(--teal); }
-      .mission-number { width: 24px; height: 24px; }
-      .mission-topic, .status-icon { display: none; }
-      .stage { padding: 20px 14px 34px; }
-      .mission-heading { margin-bottom: 18px; }
-      .bench { min-height: 500px; padding: 22px 18px; border-radius: 15px; }
-      .choices.three, .choices.two { grid-template-columns: 1fr; }
-      .route-strip { flex-wrap: wrap; }
-      .electron-demo { grid-template-columns: 1fr; }
-      .reactor-layout { grid-template-columns: 1fr; }
-      .journey-map { margin-left: -4px; margin-right: -4px; }
-      .equation-tray { grid-template-columns: 1fr; }
-      .control-options { grid-template-columns: 1fr; }
-      .control-options.two { grid-template-columns: 1fr 1fr; }
-      .arrow-ledger { grid-template-columns: 1fr; }
-      .molecule-stage { min-height: 145px; }
-      .sequence-slots { grid-template-columns: repeat(2, minmax(0,1fr)); }
-      .apparatus-stage { grid-template-columns: 1fr; }
-      .reaction-arrow { width: 120px; justify-self: center; }
-      .mechanism-scene { grid-template-columns: 1fr auto 1fr; font-size: 17px; }
-      .mechanism-scene .curly-arrow { grid-column: 1 / -1; grid-row: 2; transform: rotate(25deg); }
-      .mechanism-scene .substrate { grid-column: 3; grid-row: 1; }
-      .mechanism-scene .leaving { grid-column: 3; grid-row: 3; }
-      .lab-notes { padding: 20px; }
+    .instructions h2 {
+      font-size:14px;
+      margin:0;
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    .instructions ol {
+      display:flex;
+      flex-wrap:wrap;
+      list-style:none;
+      padding:0;
+      margin:0;
+      gap:8px 20px;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .instructions li {
+      display:flex;
+      align-items:center;
+      gap:7px;
+    }
+
+    .instructions li span {
+      width:22px;
+      height:22px;
+      display:grid;
+      place-items:center;
+      background:#e5e8e1;
+      border-radius:50%;
+      font:600 12px var(--mono);
+    }
+
+    .bench {
+      border:1px solid var(--line);
+      border-radius:18px;
+      overflow:hidden;
+      background:var(--surface);
+      box-shadow:0 15px 40px rgba(16,45,60,.04);
+    }
+
+    .bench-header {
+      padding:16px 24px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+
+    .bench-header h2 {
+      font-size:18px;
+      margin:0;
+    }
+
+    .bench-header p {
+      margin:0;
+      font-size:14px;
+      color:var(--muted);
+    }
+
+    .bench-body {
+      display:grid;
+      grid-template-columns:240px 1fr;
+    }
+
+    .sample {
+      border-right:1px solid var(--line);
+      padding:28px 20px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      background:linear-gradient(155deg,#f1f6f0,transparent);
+    }
+
+    .sample .label {
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+
+    .sample svg {
+      height:90px;
+      width:100px;
+      color:var(--teal);
+      margin:18px 0 8px;
+    }
+
+    .sample .formula {
+      font:750 25px/1.5 var(--mono);
+      overflow-wrap:anywhere;
+    }
+
+    .sample .name {
+      font-size:14px;
+      color:var(--muted);
+      margin:6px 0 0;
+    }
+
+    .configuration {
+      padding:24px;
+      display:grid;
+      gap:22px;
+    }
+
+    fieldset {
+      border:0;
+      margin:0;
+      padding:0;
+      min-width:0;
+    }
+
+    legend,.field-label {
+      font-size:14px;
+      font-weight:700;
+      padding:0;
+      display:block;
+      margin-bottom:10px;
+    }
+
+    .reagents {
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:8px;
+    }
+
+    .reagent {
+      min-height:47px;
+      background:var(--surface);
+      border:1px solid var(--line);
+      border-radius:9px;
+      padding:9px 7px;
+      font-size:15px;
+    }
+
+    .reagent:hover {
+      border-color:var(--teal);
+      background:#f1f6f0;
+    }
+
+    .reagent[aria-pressed="true"] {
+      background:var(--teal-soft);
+      border-color:var(--teal);
+      color:var(--teal-dark);
+      box-shadow:inset 0 0 0 1px var(--teal);
+    }
+
+    .select-row {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+    }
+
+    select {
+      width:100%;
+      min-height:48px;
+      appearance:none;
+      border:1px solid #acb7b4;
+      border-radius:9px;
+      background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23536770' stroke-width='1.8'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E") no-repeat right 12px center;
+      padding:10px 34px 10px 12px;
+      font-size:14px;
+    }
+
+    .action-row {
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .primary,.secondary,.text-button {
+      border:0;
+      border-radius:999px;
+      padding:11px 22px;
+      font-size:15px;
+      font-weight:700;
+      min-height:46px;
+    }
+
+    .primary {
+      color:white;
+      background:var(--teal);
+    }
+
+    .primary:hover {
+      background:var(--teal-dark);
+    }
+
+    .secondary {
+      border:1px solid #acb7b4;
+      background:transparent;
+    }
+
+    .secondary:hover {
+      background:var(--paper);
+    }
+
+    .text-button {
+      color:var(--muted);
+      padding:8px 10px;
+      background:transparent;
+      font-weight:500;
+    }
+
+    .text-button:hover {
+      color:var(--teal-dark);
+      background:var(--paper);
+    }
+
+    .button-group {
+      display:flex;
+      gap:8px;
+    }
+
+    .feedback {
+      padding:14px 24px;
+      border-top:1px solid var(--line);
+      font-size:14px;
+      min-height:52px;
+      color:var(--muted);
+      background:#f7f8f3;
+    }
+
+    .feedback.error {
+      color:var(--red);
+      background:var(--red-soft);
+    }
+
+    .feedback.success {
+      color:var(--teal-dark);
+      background:var(--teal-soft);
+    }
+
+    .bench-footer {
+      display:flex;
+      gap:12px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+
+    .bench-footer p {
+      font-size:12px;
+      color:var(--muted);
+      margin:0;
+    }
+
+    .bench-footer .hint-toggle {
+      margin-left:auto;
+      font-size:14px;
+    }
+
+    .hint {
+      border-left:3px solid #c7984e;
+      padding:10px 14px;
+      background:var(--amber-soft);
+      font-size:14px;
+      margin:10px 0;
+    }
+
+    .result {
+      padding:26px;
+      border:1px solid var(--teal);
+      border-radius:18px;
+      background:var(--teal-soft);
+      margin:20px 0;
+    }
+
+    .result.failed {
+      border-color:#c7984e;
+      background:var(--amber-soft);
+    }
+
+    .result h2 {
+      font-size:24px;
+      margin:0 0 8px;
+    }
+
+    .result p {
+      margin:0 0 16px;
+    }
+
+    .result .badge {
+      font-size:13px;
+      font-weight:700;
+      display:inline-block;
+      border:1px solid currentColor;
+      border-radius:999px;
+      padding:3px 10px;
+      margin-bottom:10px;
+      color:var(--teal-dark);
+    }
+
+    .result .button-group {
+      flex-wrap:wrap;
+    }
+
+    .notebook {
+      margin-top:28px;
+    }
+
+    .notebook h2 {
+      font-size:17px;
+      margin:0;
+    }
+
+    .notebook .sub {
+      font-size:14px;
+      color:var(--muted);
+      margin:4px 0 14px;
+    }
+
+    .log {
+      list-style:none;
+      padding:0;
+      margin:0;
+    }
+
+    .log li {
+      display:flex;
+      align-items:flex-start;
+      gap:16px;
+      padding:16px 0;
+      border-top:1px solid var(--line);
+    }
+
+    .log .step {
+      flex:0 0 28px;
+      height:28px;
+      border:1px solid var(--line);
+      border-radius:50%;
+      text-align:center;
+      font:600 13px/27px var(--mono);
+    }
+
+    .log .equation {
+      font:600 16px/1.5 var(--mono);
+      overflow-wrap:anywhere;
+    }
+
+    .log .detail {
+      color:var(--muted);
+      font-size:14px;
+      margin-top:3px;
+    }
+
+    .empty-log {
+      border-top:1px solid var(--line);
+      padding:18px 0;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .comparison {
+      margin-top:24px;
+      padding:20px 24px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:var(--surface);
+    }
+
+    .comparison h2 {
+      margin:0 0 12px;
+      font-size:17px;
+    }
+
+    .comparison p {
+      color:var(--muted);
+      margin:8px 0 0;
+      font-size:14px;
+    }
+
+    .comparison .comparison-route {
+      overflow-wrap:anywhere;
+      padding:9px 0;
+      font:600 15px/1.7 var(--mono);
+    }
+
+    footer {
+      margin-top:30px;
+      padding-top:14px;
+      border-top:1px solid var(--line);
+      color:var(--muted);
+      font-size:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:15px;
+      flex-wrap:wrap;
+    }
+
+    @media(max-width:900px) {
+      .bench-body {
+        grid-template-columns:190px 1fr;
+      }
+
+      .reagents {
+        grid-template-columns:repeat(3,minmax(0,1fr));
+      }
+
+      .select-row {
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media(max-width:620px) {
+      .shell {
+        padding:0 16px 24px;
+      }
+
+      .topbar {
+        padding-top:16px;
+        gap:8px;
+        flex-wrap:wrap;
+      }
+
+      .brand strong {
+        font-size:16px;
+      }
+
+      .brand small {
+        font-size:11px;
+      }
+
+      .brand-mark {
+        width:34px;
+        height:34px;
+      }
+
+      .completion {
+        font-size:12px;
+      }
+
+      .page-nav {
+        margin:18px 0;
+        gap:5px;
+      }
+
+      .page-nav a {
+        padding:9px 10px;
+        font-size:13px;
+      }
+
+      h1 {
+        font-size:29px;
+      }
+
+      .mission-description {
+        font-size:14px;
+      }
+
+      .route-panel {
+        padding:16px;
+        margin-top:20px;
+      }
+
+      .route-track {
+        min-width:560px;
+      }
+
+      .route-node .formula {
+        font-size:16px;
+      }
+
+      .route-node {
+        padding:12px 5px;
+      }
+
+      .route-link {
+        flex-basis:21px;
+      }
+
+      .instructions {
+        display:block;
+      }
+
+      .instructions h2 {
+        margin-bottom:7px;
+      }
+
+      .instructions ol {
+        gap:7px 12px;
+        font-size:13px;
+      }
+
+      .bench-body {
+        grid-template-columns:1fr;
+      }
+
+      .bench-header {
+        padding:14px 16px;
+        flex-wrap:wrap;
+        gap:3px 16px;
+      }
+
+      .sample {
+        border-right:0;
+        border-bottom:1px solid var(--line);
+        padding:16px;
+        display:grid;
+        grid-template-columns:56px 1fr;
+        text-align:left;
+        gap:0 12px;
+      }
+
+      .sample .label {
+        grid-column:2;
+      }
+
+      .sample svg {
+        width:50px;
+        height:66px;
+        margin:0;
+        grid-column:1;
+        grid-row:1/4;
+      }
+
+      .sample .formula {
+        font-size:23px;
+        grid-column:2;
+      }
+
+      .sample .name {
+        grid-column:2;
+        margin:0;
+      }
+
+      .configuration {
+        padding:18px 16px;
+        gap:18px;
+      }
+
+      .reagents {
+        grid-template-columns:repeat(3,minmax(0,1fr));
+      }
+
+      .reagent {
+        font-size:14px;
+        padding:8px 4px;
+        overflow-wrap:anywhere;
+      }
+
+      .action-row {
+        align-items:stretch;
+      }
+
+      .action-row .primary {
+        width:100%;
+      }
+
+      .action-row .button-group {
+        width:100%;
+        justify-content:center;
+      }
+
+      .feedback {
+        padding:13px 16px;
+      }
+
+      .challenge-picker button {
+        padding:10px 12px;
+      }
+
+      .challenge-picker small {
+        font-size:12px;
+      }
+
+      .result {
+        padding:20px;
+      }
+
+      .result h2 {
+        font-size:22px;
+      }
+    }
+
+    @media(prefers-reduced-motion:reduce) {
+      *,*::before,*::after {
+        transition:none !important;
+        scroll-behavior:auto !important;
+      }
     }
   </style>
 </head>
+
 <body>
-  <div class="app">
+  <div class="shell">
     <header class="topbar">
       <div class="brand">
         <span class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-            <circle cx="7" cy="12" r="3.2"></circle><circle cx="17" cy="7" r="3.2"></circle><circle cx="17" cy="17" r="3.2"></circle>
-            <path d="M9.8 10.6l4.4-2.2M9.8 13.4l4.4 2.2"></path>
+            <circle cx="7" cy="12" r="3.2"/>
+            <circle cx="17" cy="7" r="3.2"/>
+            <circle cx="17" cy="17" r="3.2"/>
+            <path d="m9.8 10.6 4.4-2.2m-4.4 5 4.4 2.2"/>
           </svg>
         </span>
-        <span class="brand-copy"><strong>Ethanol (CH₃CH₂OH) Reaction Lab</strong><small>IB Chemistry HL · Route simulation</small></span>
+        <div>
+          <strong>Organic Route Challenge</strong>
+          <small>Ethanol Reaction Lab · IB Chemistry HL</small>
+        </div>
       </div>
-      <div class="progress-wrap" aria-label="Game progress">
-        <div class="progress-copy"><strong id="missionProgress">Mission 1 of 5</strong><span id="completionProgress">0% complete</span></div>
-        <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar" id="progressBar"></div></div>
+
+      <div class="completion" id="completion">
+        Completed <strong>0 / 3</strong>
       </div>
-      <button class="reset-btn" id="resetButton" type="button" aria-label="Reset the full reaction route">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path></svg>
-        <span class="reset-label">Reset</span>
-      </button>
     </header>
 
-    <div class="layout">
-      <nav class="mission-rail" aria-label="Sample route">
-        <h2 class="rail-title">Sample route</h2>
-        <ol class="mission-list" id="missionList"></ol>
-        <div class="rail-footer"><strong>IB Chemistry HL</strong>Structure 3.2 · Reactivity 3.2–3.4</div>
-      </nav>
+    <nav class="page-nav" aria-label="Challenge pages">
+      <a href="#four" id="navFour">Page 1 · Four steps</a>
+      <a href="#short" id="navShort">Page 2 · Three / two steps</a>
+    </nav>
 
-      <main class="stage">
-        <section class="workspace" aria-live="polite">
-          <div class="mission-heading">
-            <p class="mission-kicker" id="missionKicker">Structure 3.2</p>
-            <h1 id="missionTitle">Structure Registry</h1>
-            <p id="missionDescription"></p>
-          </div>
-          <div class="bench" id="bench"><div class="bench-content" id="benchContent"></div></div>
+    <main id="main">
+      <div
+        class="challenge-picker"
+        id="challengePicker"
+        role="group"
+        aria-label="Choose a shorter challenge"
+        hidden
+      >
+        <button type="button" data-challenge="three" aria-pressed="true">
+          <span class="check" id="threeCheck"></span>
+          <strong>Three-step challenge</strong>
+          <small>Propene → Propan-2-ol</small>
+        </button>
+
+        <button type="button" data-challenge="two" aria-pressed="false">
+          <span class="check" id="twoCheck"></span>
+          <strong>Two-step challenge</strong>
+          <small>Ethene → Ethanoic acid</small>
+        </button>
+      </div>
+
+      <p class="eyebrow" id="eyebrow">Challenge 01 · Synthesis</p>
+      <h1 id="question" tabindex="-1"></h1>
+      <p class="mission-description" id="description"></p>
+
+      <section class="route-panel" aria-labelledby="routeHeading">
+        <div class="section-top">
+          <h2 id="routeHeading">Your reaction route</h2>
+          <span class="count-pill" id="stepCount"></span>
+        </div>
+
+        <div
+          class="route-scroll"
+          tabindex="0"
+          role="region"
+          aria-label="Reaction route; scroll horizontally on narrow screens"
+        >
+          <div class="route-track" id="routeTrack"></div>
+        </div>
+      </section>
+
+      <section
+        class="result"
+        id="result"
+        aria-labelledby="resultTitle"
+        hidden
+      ></section>
+
+      <div id="experiment">
+        <section class="instructions" aria-labelledby="instructionTitle">
+          <h2 id="instructionTitle">For each step</h2>
+          <ol>
+            <li><span>1</span>Choose a reagent</li>
+            <li><span>2</span>Set the conditions</li>
+            <li><span>3</span>Predict the product and submit</li>
+          </ol>
         </section>
 
-        <aside class="lab-notes" aria-labelledby="notesTitle">
-          <div class="notes-header">
-            <h2 id="notesTitle">Lab Log</h2>
-            <svg class="notes-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M9 3v6l-5 9a2 2 0 0 0 1.8 3h12.4A2 2 0 0 0 20 18l-5-9V3"></path><path d="M8 3h8M7 14h10"></path></svg>
+        <section class="bench" aria-labelledby="benchTitle">
+          <div class="bench-header">
+            <h2 id="benchTitle"></h2>
+            <p id="attempts"></p>
           </div>
-          <div class="note-section"><h3>Current objective</h3><p id="objectiveText"></p></div>
-          <div class="note-section"><h3>Inventory</h3><p id="inventoryText"></p></div>
-          <div class="note-section"><h3>Confirmed</h3><p id="findingText"></p></div>
-          <div class="feedback" id="feedback" role="status">Inspect the current sample, then operate the station.</div>
-          <button class="secondary-btn hint-btn" id="hintButton" type="button">Request one clue</button>
-          <button class="primary-btn" id="primaryButton" type="button">Register feature</button>
-        </aside>
-      </main>
-    </div>
+
+          <div class="bench-body">
+            <div class="sample">
+              <span class="label">Current sample</span>
+
+              <svg viewBox="0 0 100 100" fill="none" aria-hidden="true">
+                <path
+                  d="M37 13v31L18 79q-4 8 6 8h52q10 0 6-8L63 44V13"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <path
+                  d="M33 13h34M29 62h42"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <path
+                  d="m29 63-9 17q-2 5 5 5h50q7 0 5-5l-9-17Z"
+                  fill="#d9ece7"
+                />
+                <circle cx="42" cy="71" r="3" fill="currentColor" opacity=".5"/>
+                <circle cx="57" cy="77" r="2" fill="currentColor" opacity=".4"/>
+              </svg>
+
+              <span class="formula" id="sampleFormula"></span>
+              <p class="name" id="sampleName"></p>
+            </div>
+
+            <form class="configuration" id="reactionForm" novalidate>
+              <fieldset>
+                <legend>1 · Reagent — choose one</legend>
+                <div class="reagents" id="reagents"></div>
+              </fieldset>
+
+              <div class="select-row">
+                <div>
+                  <label class="field-label" for="condition">
+                    2 · Conditions
+                  </label>
+                  <select id="condition" required></select>
+                </div>
+
+                <div>
+                  <label class="field-label" for="product">
+                    3 · Predicted major organic product
+                  </label>
+                  <select id="product" required></select>
+                </div>
+              </div>
+
+              <div class="action-row">
+                <button class="primary" id="submitReaction" type="submit">
+                  Submit reaction
+                </button>
+
+                <div class="button-group">
+                  <button class="text-button" id="undo" type="button">
+                    Undo last step
+                  </button>
+                  <button class="text-button" id="reset" type="button">
+                    Restart
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div
+            class="feedback"
+            id="feedback"
+            role="status"
+            aria-live="polite"
+          ></div>
+        </section>
+      </div>
+
+      <div class="bench-footer">
+        <p>One valid conversion = one step. Switching pages keeps your progress.</p>
+        <button
+          class="text-button hint-toggle"
+          id="hintButton"
+          type="button"
+          aria-expanded="false"
+          aria-controls="hint"
+        >
+          Need a hint?
+        </button>
+      </div>
+
+      <p class="hint" id="hint" hidden></p>
+
+      <section class="notebook" aria-labelledby="logHeading">
+        <h2 id="logHeading">Reaction record</h2>
+        <p class="sub">Your completed reactions appear here.</p>
+        <ol class="log" id="log"></ol>
+        <p class="empty-log" id="emptyLog">
+          No reactions yet. Choose your first step.
+        </p>
+      </section>
+
+      <section class="comparison" id="comparison" hidden></section>
+    </main>
+
+    <footer>
+      <span>IB Chemistry HL · Organic synthesis and reaction conditions</span>
+      <span>Reagents and conditions follow your class notes.</span>
+    </footer>
   </div>
-  <div class="toast" id="toast" role="status"></div>
 
   <script>
     (() => {
-      "use strict";
+      'use strict';
 
-      const icons = {
-        check: '<svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>',
-        lock: '<svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>',
-        arrow: '<svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>'
-      };
-
-      const missions = [
-        { title: "Structure Registry", topic: "Structure 3.2", description: "Register the starting alkene by tagging the structural feature that controls its reactivity.", objective: "Identify the C=C bond that classifies the starting sample as an alkene." },
-        { title: "Hydrogenation Reactor", topic: "Reactivity 3.2.11", description: "Configure the first reactor and carry the ethene (CH₂=CH₂) sample forward to ethane (CH₃CH₃).", objective: "Reduce ethene (CH₂=CH₂) to ethane (CH₃CH₃) by selecting the correct reagent and catalyst." },
-        { title: "Radical Chain", topic: "Reactivity 3.3", description: "Convert the ethane (CH₃CH₃) sample into bromoethane (CH₃CH₂Br) without breaking the radical chain.", objective: "Initiate Br₂ homolysis, then load the two propagation equations in order." },
-        { title: "Electron-Pair Transfer", topic: "Reactivity 3.4 · HL", description: "Use the bromoethane (CH₃CH₂Br) from the radical station to build ethanol (CH₃CH₂OH) by nucleophilic substitution.", objective: "Load a nucleophile and account for both electron-pair movements in the SN2 step." },
-        { title: "Oxidation Control", topic: "Reactivity 3.2.9–3.2.10", description: "Use the ethanol (CH₃CH₂OH) product in two oxidation runs: isolate ethanal (CH₃CHO), then continue to ethanoic acid (CH₃COOH).", objective: "Control the oxidation level with oxidant amount and apparatus choice." }
-      ];
-
-      const state = {
-        current: 0,
-        completed: new Set(),
-        success: false,
-        structureFeature: null,
-        hydrogenation: { reagent: null, catalyst: null },
-        radicalStage: 0,
-        uvOn: false,
-        radicalSequence: [],
-        pairStage: 0,
-        pairReagent: null,
-        mechanismStep: 0,
-        mechanismDraft: [],
-        oxidationStage: 0,
-        oxidation: { amount: null, setup: null },
-        clueUsed: new Set()
-      };
-
-      const els = {
-        missionList: document.getElementById("missionList"),
-        missionTitle: document.getElementById("missionTitle"),
-        missionKicker: document.getElementById("missionKicker"),
-        missionDescription: document.getElementById("missionDescription"),
-        missionProgress: document.getElementById("missionProgress"),
-        completionProgress: document.getElementById("completionProgress"),
-        progressBar: document.getElementById("progressBar"),
-        progressTrack: document.querySelector(".progress-track"),
-        bench: document.getElementById("bench"),
-        benchContent: document.getElementById("benchContent"),
-        objective: document.getElementById("objectiveText"),
-        inventory: document.getElementById("inventoryText"),
-        finding: document.getElementById("findingText"),
-        feedback: document.getElementById("feedback"),
-        primary: document.getElementById("primaryButton"),
-        hintButton: document.getElementById("hintButton"),
-        reset: document.getElementById("resetButton"),
-        toast: document.getElementById("toast")
-      };
-
-      function escapeHtml(value) {
-        return String(value).replace(/[&<>'"]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
-      }
-
-      function toast(message) {
-        els.toast.textContent = message;
-        els.toast.classList.add("is-visible");
-        window.clearTimeout(toast.timer);
-        toast.timer = window.setTimeout(() => els.toast.classList.remove("is-visible"), 1900);
-      }
-
-      function setFeedback(message, type = "") {
-        els.feedback.textContent = message;
-        els.feedback.className = `feedback ${type}`.trim();
-      }
-
-      function renderRail() {
-        const unlockedThrough = Math.min(state.completed.size, missions.length - 1);
-        els.missionList.innerHTML = missions.map((mission, index) => {
-          const complete = state.completed.has(index);
-          const unlocked = index <= unlockedThrough || complete;
-          const current = state.current === index;
-          const icon = complete ? icons.check : unlocked ? icons.arrow : icons.lock;
-          return `<li><button class="mission-button${complete ? " is-complete" : ""}" type="button" data-mission="${index}" ${current ? 'aria-current="step"' : ""} ${unlocked ? "" : "disabled"}>
-            <span class="mission-number">${complete ? "✓" : index + 1}</span>
-            <span><span class="mission-name">${mission.title}</span><span class="mission-topic">${mission.topic}</span></span>${icon}
-          </button></li>`;
-        }).join("");
-      }
-
-      function renderProgress() {
-        const percent = Math.round((state.completed.size / missions.length) * 100);
-        els.missionProgress.textContent = state.completed.size === missions.length ? "Route complete" : `Mission ${state.current + 1} of ${missions.length}`;
-        els.completionProgress.textContent = `${percent}% complete`;
-        els.progressBar.style.width = `${percent}%`;
-        els.progressTrack.setAttribute("aria-valuenow", String(percent));
-      }
-
-      function stageCounter(current, total) {
-        return `<span class="stage-counter">Phase ${current + 1}/${total}<span class="stage-dots">${Array.from({ length: total }, (_, i) => `<span class="stage-dot ${i < current ? "is-complete" : i === current ? "is-active" : ""}"></span>`).join("")}</span></span>`;
-      }
-
-      function choice(value, label, note = "") {
-        const selected = state.selected === value;
-        return `<button type="button" class="choice" data-choice="${escapeHtml(value)}" aria-pressed="${selected}"><span class="choice-marker"></span><span>${label}${note ? `<small>${note}</small>` : ""}</span></button>`;
-      }
-
-      const routeNodes = [
-        { formula: "CH₂=CH₂", name: "ethene (CH₂=CH₂)" },
-        { formula: "CH₃CH₃", name: "ethane (CH₃CH₃)" },
-        { formula: "CH₃CH₂Br", name: "bromoethane (CH₃CH₂Br)" },
-        { formula: "CH₃CH₂OH", name: "ethanol (CH₃CH₂OH)" },
-        { formula: "CH₃CHO / CH₃COOH", name: "ethanal (CH₃CHO) / ethanoic acid (CH₃COOH)" }
-      ];
-
-      function journeyMap(fromIndex, targetIndex) {
-        return `<div class="journey-map" aria-label="Connected organic reaction route">${routeNodes.map((node, index) => {
-          const classes = ["route-node"];
-          if (index < fromIndex) classes.push("is-complete");
-          else if (index === fromIndex) classes.push("is-current");
-          else if (index === targetIndex) classes.push("is-target");
-          else classes.push("is-locked");
-          const item = `<div class="${classes.join(" ")}"><span class="route-formula">${node.formula}</span><span class="route-name">${node.name}${index === fromIndex ? " · current" : index === targetIndex ? " · target" : ""}</span></div>`;
-          if (index === routeNodes.length - 1) return item;
-          const linkComplete = index < fromIndex ? " is-complete" : "";
-          return `${item}<span class="route-link${linkComplete}" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>`;
-        }).join("")}</div>`;
-      }
-
-      function controlButton(group, value, label, note, selected) {
-        return `<button class="control-option${selected === value ? " is-selected" : ""}" type="button" data-control="${group}" data-value="${value}" aria-pressed="${selected === value}">${label}${note ? `<small>${note}</small>` : ""}</button>`;
-      }
-
-      function setPrimary(label) {
-        els.primary.textContent = label;
-        els.primary.dataset.action = "check";
-      }
-
-      function renderMissionOne() {
-        els.benchContent.innerHTML = `
-          <div class="operation-brief"><div><strong>Sample ERL–E01 · structure scan</strong><span>Tag the feature that defines the sample's organic family.</span></div><span class="sample-state">CURRENT · ETHENE (CH₂=CH₂)</span></div>
-          ${journeyMap(0, 0)}
-          <div class="structure-inspector">
-            <div class="inspect-formula" aria-label="Interactive displayed formula for ethene (CH₂=CH₂)">
-              <span>H₂</span><button class="feature-btn" type="button" data-feature="carbon" aria-pressed="${state.structureFeature === "carbon"}" aria-label="Left carbon atom">C</button>
-              <button class="feature-btn feature-bond" type="button" data-feature="double" aria-pressed="${state.structureFeature === "double"}" aria-label="Carbon carbon double bond"></button>
-              <button class="feature-btn" type="button" data-feature="carbon" aria-pressed="${state.structureFeature === "carbon"}" aria-label="Right carbon atom">C</button><span>H₂</span>
-            </div>
-            <div class="inspect-caption">Select directly on the structure. The registry will use that feature to classify the sample.</div>
-          </div>`;
-        setPrimary("Register feature");
-      }
-
-      function spectrumSvg(type) {
-        if (type === "ir") {
-          return `<svg class="spectrum" viewBox="0 0 760 235" role="img" aria-label="IR spectrum with a broad O-H absorption from 3200 to 3600 reciprocal centimeters and C-O absorption near 1050">
-            <line class="axis" x1="50" y1="190" x2="730" y2="190"/><line class="axis" x1="50" y1="25" x2="50" y2="190"/>
-            <g class="grid"><line x1="210" y1="25" x2="210" y2="190"/><line x1="370" y1="25" x2="370" y2="190"/><line x1="530" y1="25" x2="530" y2="190"/><line x1="690" y1="25" x2="690" y2="190"/></g>
-            <path class="trace" d="M50 54 C92 48,100 78,116 124 C134 175,174 178,205 124 C224 90,230 56,270 53 L300 54 L310 74 L320 54 L470 54 L500 58 L510 110 L523 55 L600 54 L610 150 L624 55 L730 54"/>
-            <text x="42" y="211">4000</text><text x="198" y="211">3000</text><text x="358" y="211">2000</text><text x="518" y="211">1000</text><text x="675" y="211">500</text>
-            <text class="annotation" x="104" y="175">broad O–H</text><text class="annotation" x="575" y="170">C–O</text><text x="600" y="228">wavenumber / cm⁻¹</text>
-          </svg>`;
+      const compounds = {
+        ethene: {
+          formula: 'CH₂=CH₂',
+          name: 'Ethene',
+          family: 'alkene'
+        },
+        ethane: {
+          formula: 'CH₃CH₃',
+          name: 'Ethane',
+          family: 'alkane'
+        },
+        ethanol: {
+          formula: 'CH₃CH₂OH',
+          name: 'Ethanol',
+          family: 'primary alcohol'
+        },
+        ethanal: {
+          formula: 'CH₃CHO',
+          name: 'Ethanal',
+          family: 'aldehyde'
+        },
+        acid: {
+          formula: 'CH₃COOH',
+          name: 'Ethanoic acid',
+          family: 'carboxylic acid'
+        },
+        propene: {
+          formula: 'CH₃CH=CH₂',
+          name: 'Propene',
+          family: 'alkene'
+        },
+        propane: {
+          formula: 'CH₃CH₂CH₃',
+          name: 'Propane',
+          family: 'alkane'
+        },
+        propanol: {
+          formula: 'CH₃CH(OH)CH₃',
+          name: 'Propan-2-ol',
+          family: 'secondary alcohol'
+        },
+        propanone: {
+          formula: 'CH₃COCH₃',
+          name: 'Propanone',
+          family: 'ketone'
+        },
+        bromoethane: {
+          formula: 'CH₃CH₂Br',
+          name: 'Bromoethane',
+          family: 'halogenoalkane'
+        },
+        dibromo: {
+          formula: 'BrCH₂CH₂Br',
+          name: '1,2-Dibromoethane',
+          family: 'halogenoalkane'
+        },
+        bromopropane: {
+          formula: 'CH₃CHBrCH₃',
+          name: '2-Bromopropane',
+          family: 'halogenoalkane'
+        },
+        dibromopropane: {
+          formula: 'CH₃CHBrCH₂Br',
+          name: '1,2-Dibromopropane',
+          family: 'halogenoalkane'
         }
-        if (type === "nmr") {
-          return `<svg class="spectrum" viewBox="0 0 760 235" role="img" aria-label="Proton NMR spectrum showing a triplet at 1.2 ppm, broad singlet near 2.4 ppm and quartet at 3.7 ppm">
-            <line class="axis" x1="45" y1="190" x2="730" y2="190"/>
-            <g class="grid"><line x1="155" y1="25" x2="155" y2="190"/><line x1="265" y1="25" x2="265" y2="190"/><line x1="375" y1="25" x2="375" y2="190"/><line x1="485" y1="25" x2="485" y2="190"/><line x1="595" y1="25" x2="595" y2="190"/></g>
-            <path class="trace" d="M45 188 L290 188 L294 102 L298 188 L303 69 L307 188 L312 104 L316 188 L430 188 Q444 140 458 188 L610 188 L614 97 L618 188 L623 66 L627 188 L632 98 L636 188 L730 188"/>
-            <text x="40" y="211">6</text><text x="150" y="211">5</text><text x="260" y="211">4</text><text x="370" y="211">3</text><text x="480" y="211">2</text><text x="590" y="211">1</text><text x="713" y="211">0</text>
-            <text class="annotation" x="273" y="48">quartet · 2H</text><text class="annotation" x="410" y="130">broad · 1H</text><text class="annotation" x="590" y="48">triplet · 3H</text><text x="658" y="228">δ / ppm</text>
-          </svg>`;
-        }
-        return `<svg class="spectrum" viewBox="0 0 760 235" role="img" aria-label="Mass spectrum with a molecular ion at mass to charge 46 and a base peak at mass to charge 31">
-          <line class="axis" x1="50" y1="190" x2="730" y2="190"/><line class="axis" x1="50" y1="25" x2="50" y2="190"/>
-          <g class="grid"><line x1="186" y1="25" x2="186" y2="190"/><line x1="322" y1="25" x2="322" y2="190"/><line x1="458" y1="25" x2="458" y2="190"/><line x1="594" y1="25" x2="594" y2="190"/><line x1="730" y1="25" x2="730" y2="190"/></g>
-          <line class="peak" x1="254" y1="190" x2="254" y2="145"/><line class="peak" x1="444" y1="190" x2="444" y2="116"/><line class="peak" x1="472" y1="190" x2="472" y2="42"/><line class="peak" x1="662" y1="190" x2="662" y2="134"/><line class="peak" x1="676" y1="190" x2="676" y2="151"/>
-          <text x="42" y="211">0</text><text x="176" y="211">10</text><text x="312" y="211">20</text><text x="448" y="211">30</text><text x="584" y="211">40</text><text x="716" y="211">50</text>
-          <text class="annotation" x="445" y="35">base peak: 31</text><text class="annotation" x="638" y="126">M⁺: 46</text><text x="683" y="228">m/z</text>
-        </svg>`;
-      }
+      };
 
-      function renderMissionTwo() {
-        els.benchContent.innerHTML = `
-          <div class="operation-brief"><div><strong>Reactor H–01 · hydrogenation</strong><span>Configure both inputs before starting the reactor.</span></div><span class="sample-state">FEED · ETHENE (CH₂=CH₂)</span></div>
-          ${journeyMap(0, 1)}
-          <div class="reactor-layout">
-            <div class="reaction-chamber${state.hydrogenation.reagent && state.hydrogenation.catalyst ? " is-active" : ""}"><div class="sample-formula">CH₂=CH₂<small>π bond awaiting conversion</small></div></div>
-            <div class="control-bank">
-              <div class="control-group"><strong>Reagent feed</strong><div class="control-options">${controlButton("h-reagent", "h2", "H₂", "adds hydrogen", state.hydrogenation.reagent)}${controlButton("h-reagent", "steam", "H₂O(g)", "hydration feed", state.hydrogenation.reagent)}${controlButton("h-reagent", "br2", "Br₂", "halogen feed", state.hydrogenation.reagent)}</div></div>
-              <div class="control-group"><strong>Catalyst bed</strong><div class="control-options">${controlButton("h-catalyst", "ni", "Ni", "metal catalyst", state.hydrogenation.catalyst)}${controlButton("h-catalyst", "uv", "UV", "photochemical", state.hydrogenation.catalyst)}${controlButton("h-catalyst", "acid", "H₃PO₄", "acid catalyst", state.hydrogenation.catalyst)}</div></div>
-              <div class="mini-callout"><strong>Reactor readout:</strong><span>${state.hydrogenation.reagent || state.hydrogenation.catalyst ? "Configuration loaded. Predict what happens to the π bond before running." : "No feed or catalyst selected."}</span></div>
-            </div>
-          </div>`;
-        setPrimary("Run hydrogenation");
-      }
-
-      function flaskSvg(label) {
-        return `<svg class="flask" viewBox="0 0 180 185" role="img" aria-label="${label}"><path d="M68 18h44M78 18v55l-44 73c-9 15 2 24 17 24h78c15 0 26-9 17-24l-44-73V18" fill="rgba(255,255,255,.65)" stroke="currentColor" stroke-width="3"/><path class="liquid" d="M51 132h78l17 28c2 4-4 10-13 10H47c-9 0-15-6-13-10z"/><path d="M51 132h78" stroke="currentColor" stroke-width="2"/><text x="90" y="154" text-anchor="middle" fill="currentColor" font-family="Cascadia Mono, monospace" font-size="12">${label}</text></svg>`;
-      }
-
-      const propagationSteps = [
-        { id: "prop1", equation: "Br• + C₂H₆ → HBr + C₂H₅•", note: "creates the ethyl radical" },
-        { id: "prop2", equation: "C₂H₅• + Br₂ → C₂H₅Br + Br•", note: "regenerates Br•" },
-        { id: "term", equation: "Br• + Br• → Br₂", note: "removes radicals" },
-        { id: "overall", equation: "C₂H₆ + Br₂ → C₂H₅Br + HBr", note: "overall equation only" }
+      const reagents = [
+        ['h2', 'H₂'],
+        ['water', 'H₂O'],
+        ['br2', 'Br₂'],
+        ['hbr', 'HBr'],
+        ['oxidant', 'Acidified K₂Cr₂O₇'],
+        ['nabh4', 'NaBH₄'],
+        ['lialh4', 'LiAlH₄']
       ];
 
-      function renderMissionThree() {
-        if (state.radicalStage === 0) {
-          els.benchContent.innerHTML = `
-            <div class="operation-brief"><div><strong>Photochemical station R–03</strong><span>Generate the first radical before loading propagation chemistry.</span></div>${stageCounter(0, 2)}</div>
-            ${journeyMap(1, 2)}
-            <div class="reactor-layout">
-              <div class="reaction-chamber${state.uvOn ? " is-active" : ""}"><div class="sample-formula">CH₃CH₃ + Br₂<small>${state.uvOn ? "Br₂ → 2Br• · homolytic fission" : "radical source inactive"}</small></div></div>
-              <div class="control-bank">
-                <button class="uv-switch" type="button" data-uv aria-pressed="${state.uvOn}"><span>UV LAMP <small>${state.uvOn ? "ON" : "OFF"}</small></span><span class="switch-track"><span class="switch-knob"></span></span></button>
-                <div class="chain-meter"><span class="chain-step is-active">Initiation</span><span class="chain-step">Propagation</span><span class="chain-step">Product</span></div>
-                <div class="mini-callout"><strong>Station status:</strong><span>${state.uvOn ? "Br—Br bond is splitting equally; two Br• radicals are available." : "The Br—Br bond remains intact."}</span></div>
+      const conditions = [
+        ['nickel', 'Ni / heat'],
+        ['hydration', 'conc. H₂SO₄ + heat'],
+        ['unspecified', 'Not specified in notes'],
+        ['distil', 'distillation'],
+        ['reflux', 'reflux'],
+        ['refluxheat', 'reflux & heat'],
+        ['heat', 'heat'],
+        ['dryheat', 'dry & heat']
+      ];
+
+      // Only the reaction classes supplied by the learner are used.
+      // Wording follows Chemistry Review (1), (3) and (14).
+      // Both reflux labels are accepted for the relevant alcohol oxidations.
+      // Reduction equations show the overall organic conversion, including work-up.
+
+      const reactions = [
+        {
+          from: 'ethene',
+          to: 'ethane',
+          r: 'h2',
+          c: 'nickel',
+          tag: 'hydrogenation',
+          type: 'Hydrogenation',
+          equation: 'CH₂=CH₂ + H₂ → CH₃CH₃'
+        },
+        {
+          from: 'propene',
+          to: 'propane',
+          r: 'h2',
+          c: 'nickel',
+          tag: 'hydrogenation',
+          type: 'Hydrogenation',
+          equation: 'CH₃CH=CH₂ + H₂ → CH₃CH₂CH₃'
+        },
+        {
+          from: 'ethene',
+          to: 'ethanol',
+          r: 'water',
+          c: 'hydration',
+          tag: 'hydration',
+          type: 'Hydration',
+          equation: 'CH₂=CH₂ + H₂O → CH₃CH₂OH'
+        },
+        {
+          from: 'propene',
+          to: 'propanol',
+          r: 'water',
+          c: 'hydration',
+          tag: 'hydration',
+          type: 'Hydration · major product',
+          equation: 'CH₃CH=CH₂ + H₂O → CH₃CH(OH)CH₃'
+        },
+        {
+          from: 'ethene',
+          to: 'dibromo',
+          r: 'br2',
+          c: 'unspecified',
+          tag: 'halogenation',
+          type: 'Halogenation',
+          equation: 'CH₂=CH₂ + Br₂ → BrCH₂CH₂Br'
+        },
+        {
+          from: 'propene',
+          to: 'dibromopropane',
+          r: 'br2',
+          c: 'unspecified',
+          tag: 'halogenation',
+          type: 'Halogenation',
+          equation: 'CH₃CH=CH₂ + Br₂ → CH₃CHBrCH₂Br'
+        },
+        {
+          from: 'ethene',
+          to: 'bromoethane',
+          r: 'hbr',
+          c: 'unspecified',
+          tag: 'hydrohalogenation',
+          type: 'Addition of hydrogen halide',
+          equation: 'CH₂=CH₂ + HBr → CH₃CH₂Br'
+        },
+        {
+          from: 'propene',
+          to: 'bromopropane',
+          r: 'hbr',
+          c: 'unspecified',
+          tag: 'hydrohalogenation',
+          type: 'Addition of hydrogen halide · major product',
+          equation: 'CH₃CH=CH₂ + HBr → CH₃CHBrCH₃'
+        },
+        {
+          from: 'ethanol',
+          to: 'ethanal',
+          r: 'oxidant',
+          c: 'distil',
+          tag: 'oxidize-aldehyde',
+          type: 'Primary alcohol oxidation',
+          equation: 'CH₃CH₂OH + [O] → CH₃CHO + H₂O'
+        },
+        {
+          from: 'ethanol',
+          to: 'acid',
+          r: 'oxidant',
+          c: 'reflux',
+          tag: 'oxidize-acid',
+          type: 'Primary alcohol oxidation',
+          equation: 'CH₃CH₂OH + 2[O] → CH₃COOH + H₂O'
+        },
+        {
+          from: 'propanol',
+          to: 'propanone',
+          r: 'oxidant',
+          c: 'refluxheat',
+          tag: 'oxidize-ketone',
+          type: 'Secondary alcohol oxidation',
+          equation: 'CH₃CH(OH)CH₃ + [O] → CH₃COCH₃ + H₂O'
+        },
+        {
+          from: 'ethanal',
+          to: 'ethanol',
+          r: 'nabh4',
+          c: 'heat',
+          tag: 'reduce-aldehyde',
+          type: 'Reduction',
+          equation: 'CH₃CHO + 2[H] → CH₃CH₂OH'
+        },
+        {
+          from: 'acid',
+          to: 'ethanol',
+          r: 'lialh4',
+          c: 'dryheat',
+          tag: 'reduce-acid',
+          type: 'Reduction',
+          equation: 'CH₃COOH + 4[H] → CH₃CH₂OH + H₂O'
+        },
+        {
+          from: 'propanone',
+          to: 'propanol',
+          r: 'nabh4',
+          c: 'heat',
+          tag: 'reduce-ketone',
+          type: 'Reduction',
+          equation: 'CH₃COCH₃ + 2[H] → CH₃CH(OH)CH₃'
+        }
+      ];
+
+      const challenges = {
+        four: {
+          start: 'ethene',
+          steps: 4,
+          target: 'acid',
+          kicker: 'Challenge 01 · Four-step reaction sequence',
+          description: 'Required sequence: form ethanal, reduce it to an alcohol, then make ethanoic acid. This challenge tests a specified route, not the shortest synthesis.',
+          required: [
+            'oxidize-aldehyde',
+            'reduce-aldehyde',
+            'oxidize-acid'
+          ],
+          hint: 'An alcohol may appear more than once. Your oxidation conditions determine the product.'
+        },
+
+        three: {
+          start: 'propene',
+          steps: 3,
+          target: 'propanol',
+          kicker: 'Challenge 02 · Three-step reaction sequence',
+          description: 'You must form propanone and then reduce it to propan-2-ol. Reaching the alcohol for the first time does not complete the challenge.',
+          required: [
+            'oxidize-ketone',
+            'reduce-ketone'
+          ],
+          hint: 'Identify the alcohol formed by hydration, then consider its oxidation product.'
+        },
+
+        two: {
+          start: 'ethene',
+          steps: 2,
+          target: 'acid',
+          kicker: 'Challenge 03 · Two-step synthesis',
+          description: 'Make ethanoic acid from ethene. No intermediate is specified. Choose the conditions that reach the required oxidation level directly.',
+          required: [],
+          hint: 'A primary alcohol can be oxidised directly to a carboxylic acid. Check the apparatus.'
+        }
+      };
+
+      const $ = id => document.getElementById(id);
+
+      const fresh = () => ({
+        history: [],
+        selection: {
+          reagent: '',
+          condition: '',
+          product: ''
+        },
+        errors: 0,
+        hintUsed: false,
+        hintOpen: false,
+        outcome: null,
+        feedback: 'Choose a reagent and conditions, predict the major organic product, then submit.',
+        feedbackType: ''
+      });
+
+      const runs = {
+        four: fresh(),
+        three: fresh(),
+        two: fresh()
+      };
+
+      const completed = new Map();
+      let active = 'four';
+
+      const run = () => runs[active];
+      const challenge = () => challenges[active];
+
+      const current = () =>
+        run().history.at(-1)?.to || challenge().start;
+
+      const labelOf = (list, key) =>
+        list.find(([id]) => id === key)?.[1] || '';
+
+      const nameOf = id => compounds[id].name;
+
+      function requirementsMet() {
+        let next = 0;
+
+        for (const reaction of run().history) {
+          if (reaction.tag === challenge().required[next]) {
+            next++;
+          }
+        }
+
+        return next === challenge().required.length;
+      }
+
+      $('reagents').innerHTML = reagents.map(([id, label]) => `
+        <button
+          type="button"
+          class="reagent"
+          data-reagent="${id}"
+          aria-pressed="false"
+        >${label}</button>
+      `).join('');
+
+      $('condition').innerHTML =
+        '<option value="">Choose reaction conditions</option>' +
+        conditions.map(([id, label]) =>
+          `<option value="${id}">${label}</option>`
+        ).join('');
+
+      $('product').innerHTML =
+        '<option value="">Choose your predicted product</option>' +
+        Object.entries(compounds).map(([id, p]) =>
+          `<option value="${id}">${p.formula} · ${p.name}</option>`
+        ).join('');
+
+      function feedback(message, type = '') {
+        run().feedback = message;
+        run().feedbackType = type;
+        $('feedback').textContent = message;
+        $('feedback').className = `feedback ${type}`;
+      }
+
+      function renderRoute() {
+        const s = run();
+        const c = challenge();
+        const nodes = [c.start, ...s.history.map(r => r.to)];
+
+        $('routeTrack').innerHTML = Array.from(
+          {length: c.steps + 1},
+          (_, i) => {
+            const known = nodes[i];
+            const target = i === c.steps;
+            const p = compounds[known || (target ? c.target : '')];
+
+            const style = known
+              ? (i === s.history.length ? 'current' : '')
+              : target
+                ? 'target'
+                : 'future';
+
+            const caption = known
+              ? (i === 0 ? `Start · ${p.family}` : p.name)
+              : target
+                ? `Target · ${p.name}`
+                : `Intermediate ${i}`;
+
+            return `
+              ${i ? '<span class="route-link" aria-hidden="true">→</span>' : ''}
+              <div class="route-node ${style}">
+                <span class="formula">${p?.formula || '?'}</span>
+                <small>${caption}</small>
               </div>
-            </div>`;
-          setPrimary("Start initiation");
-          return;
-        }
+            `;
+          }
+        ).join('');
 
-        els.benchContent.innerHTML = `
-          <div class="operation-brief"><div><strong>Chain assembly R–03</strong><span>Load exactly two propagation equations in chemical order.</span></div>${stageCounter(1, 2)}</div>
-          ${journeyMap(1, 2)}
-          <div class="chain-meter"><span class="chain-step is-complete">Initiation</span><span class="chain-step is-active">Propagation</span><span class="chain-step">Product</span></div>
-          <div class="loaded-sequence">${[0,1].map(index => { const step = propagationSteps.find(item => item.id === state.radicalSequence[index]); return `<div class="sequence-entry${step ? " is-filled" : ""}">${step ? escapeHtml(step.equation) : `Propagation ${index + 1}`}</div>`; }).join("")}</div>
-          <div class="equation-tray">${propagationSteps.map(step => `<button class="equation-card${state.radicalSequence.includes(step.id) ? " is-used" : ""}" type="button" data-radical-prop="${step.id}" ${state.radicalSequence.includes(step.id) ? "disabled" : ""}><strong>${step.equation}</strong><small>${step.note}</small></button>`).join("")}</div>
-          <button class="secondary-btn" type="button" id="undoRadical" ${state.radicalSequence.length ? "" : "disabled"}>Remove last equation</button>`;
-        setPrimary("Run propagation");
+        $('stepCount').textContent =
+          `${s.history.length} / ${c.steps} steps used`;
       }
 
-      const radicalSteps = [
-        { id: "init", equation: "Br₂ → 2Br•", type: "initiation · UV" },
-        { id: "prop1", equation: "Br• + C₂H₆ → HBr + C₂H₅•", type: "propagation 1" },
-        { id: "prop2", equation: "C₂H₅• + Br₂ → C₂H₅Br + Br•", type: "propagation 2" },
-        { id: "term", equation: "2C₂H₅• → C₄H₁₀", type: "termination" }
-      ];
+      function renderLog() {
+        $('emptyLog').hidden = run().history.length > 0;
 
-      function renderMissionFour() {
-        if (state.pairStage === 0) {
-          els.benchContent.innerHTML = `
-            <div class="operation-brief"><div><strong>Reagent transfer S–04</strong><span>Select an electron-pair donor for the bromoethane (CH₃CH₂Br) sample.</span></div>${stageCounter(0, 2)}</div>
-            ${journeyMap(2, 3)}
-            <div class="reactor-layout">
-              <div class="reaction-chamber"><div class="sample-formula">CH₃CH₂Br<small>polar Cδ+—Brδ− bond</small></div></div>
-              <div class="control-bank"><div class="control-group"><strong>Reagent tray</strong><div class="control-options">${controlButton("pair-reagent", "oh", ":OH⁻", "lone-pair donor", state.pairReagent)}${controlButton("pair-reagent", "hplus", "H⁺", "electron-pair acceptor", state.pairReagent)}${controlButton("pair-reagent", "br2", "Br₂", "non-polar reagent", state.pairReagent)}</div></div><div class="mini-callout"><strong>Transfer requirement:</strong><span>The incoming species must supply the electron pair for the new C—O bond.</span></div></div>
-            </div>`;
-          setPrimary("Load nucleophile");
-          return;
-        }
-
-        els.benchContent.innerHTML = `
-          <div class="operation-brief"><div><strong>SN2 electron ledger S–04</strong><span>Build each curly arrow by selecting its electron source, then its destination.</span></div>${stageCounter(1, 2)}</div>
-          ${journeyMap(2, 3)}
-          <div class="mechanism-board">
-            <div class="mechanism-line"><button class="electron-node${state.mechanismStep > 0 ? " is-complete" : ""}" type="button" data-electron-node="lonepair" aria-pressed="${state.mechanismDraft.includes("lonepair")}">:OH⁻ lone pair</button><span>+</span><span>CH₃—</span><button class="electron-node${state.mechanismStep > 0 ? " is-complete" : ""}" type="button" data-electron-node="carbon" aria-pressed="${state.mechanismDraft.includes("carbon")}">CH₂<sup>δ+</sup></button><button class="electron-node${state.mechanismStep > 1 ? " is-complete" : ""}" type="button" data-electron-node="cbr" aria-pressed="${state.mechanismDraft.includes("cbr")}">— bond —</button><button class="electron-node${state.mechanismStep > 1 ? " is-complete" : ""}" type="button" data-electron-node="bromine" aria-pressed="${state.mechanismDraft.includes("bromine")}">Br<sup>δ−</sup></button></div>
-            <div class="arrow-ledger"><div class="arrow-record${state.mechanismStep > 0 ? " is-complete" : ""}"><strong>Arrow 1</strong><br>${state.mechanismStep > 0 ? "O lone pair → Cδ+ ✓" : "new C—O bond"}</div><div class="arrow-record${state.mechanismStep > 1 ? " is-complete" : ""}"><strong>Arrow 2</strong><br>${state.mechanismStep > 1 ? "C—Br bond → Br ✓" : "leaving-group electrons"}</div></div>
-          </div>
-          <div class="mini-callout"><strong>Selection rule:</strong><span>${state.mechanismStep === 0 ? "Build the new bond first." : state.mechanismStep === 1 ? "Now account for the electrons in the breaking C—Br bond." : "Both electron pairs are accounted for. The substitution can run."}</span></div>`;
-        setPrimary("Run substitution");
-      }
-
-      function renderMissionFive() {
-        const target = state.oxidationStage === 0 ? "ethanal (CH₃CHO)" : "ethanoic acid (CH₃COOH)";
-        const formula = state.oxidationStage === 0 ? "CH₃CHO" : "CH₃COOH";
-        els.benchContent.innerHTML = `
-          <div class="operation-brief"><div><strong>Oxidation order O–05${state.oxidationStage ? "B" : "A"}</strong><span>${state.oxidationStage === 0 ? "Isolate the aldehyde intermediate before further oxidation." : "Push the same carbon chain to the carboxylic acid."}</span></div>${stageCounter(state.oxidationStage, 2)}</div>
-          ${journeyMap(3, 4)}
-          <div class="target-order"><strong>Target product · ${target}</strong><span>${state.oxidationStage === 0 ? "Collect the volatile intermediate as it forms." : "Keep reactants in contact with excess oxidant."}</span></div>
-          <div class="reactor-layout">
-            <div class="reaction-chamber${state.oxidation.amount && state.oxidation.setup ? " is-active" : ""}"><div class="sample-formula">CH₃CH₂OH + [O] → ${formula}<small>primary alcohol oxidation</small></div></div>
-            <div class="control-bank">
-              <div class="control-group"><strong>Oxidant charge</strong><div class="control-options two">${controlButton("ox-amount", "limited", "Limited [O]", "controlled charge", state.oxidation.amount)}${controlButton("ox-amount", "excess", "Excess [O]", "continued oxidation", state.oxidation.amount)}</div></div>
-              <div class="control-group"><strong>Apparatus</strong><div class="control-options two">${controlButton("ox-setup", "distillation", "Distillation", "remove volatile product", state.oxidation.setup)}${controlButton("ox-setup", "reflux", "Reflux", "return condensate", state.oxidation.setup)}</div></div>
+        $('log').innerHTML = run().history.map((r, i) => `
+          <li>
+            <span class="step">${i + 1}</span>
+            <div>
+              <div class="equation">${r.equation}</div>
+              <div class="detail">
+                ${labelOf(reagents, r.r)} ·
+                ${labelOf(conditions, r.c)} ·
+                ${r.type}
+              </div>
             </div>
-          </div>`;
-        setPrimary(state.oxidationStage === 0 ? "Run oxidation A" : "Run oxidation B");
+          </li>
+        `).join('');
       }
 
-      function renderVictory() {
-        els.missionKicker.textContent = "IB Chemistry HL · Route complete";
-        els.missionTitle.textContent = "One sample. Five connected decisions.";
-        els.missionDescription.textContent = "The route now links structure, reduction, radical chemistry, electron-pair transfer and controlled oxidation.";
-        els.objective.textContent = "Review any completed station or reset the route to run it again.";
-        els.inventory.textContent = "Final products · ethanal (CH₃CHO) collected · ethanoic acid (CH₃COOH) verified";
-        els.finding.textContent = "Every carbon atom and every mechanistic electron is accounted for.";
-        els.benchContent.innerHTML = `<div class="victory"><div class="victory-inner"><div class="victory-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M9 3v6l-5 9a2 2 0 0 0 1.8 3h12.4A2 2 0 0 0 20 18l-5-9V3"></path><path d="M8 3h8M7 14h10M8.5 17l2 2 5-5"></path></svg></div><h2>Reaction route verified</h2><p>Ethene (CH₂=CH₂) → ethane (CH₃CH₃) → bromoethane (CH₃CH₂Br) → ethanol (CH₃CH₂OH) → ethanal (CH₃CHO) / ethanoic acid (CH₃COOH)</p><div class="victory-summary"><span>Structure</span><span>Reactivity</span><span>Electron accounting</span></div></div></div>`;
-        setFeedback("Route complete. The product from each station became the feed for the next.", "success");
-        els.hintButton.hidden = true;
-        els.primary.textContent = "Run route again";
-        els.primary.disabled = false;
-        els.primary.dataset.action = "reset";
+      function renderComparison() {
+        $('comparison').hidden =
+          !(completed.has('four') && completed.has('two'));
+
+        if ($('comparison').hidden) return;
+
+        const routeText = key =>
+          [
+            challenges[key].start,
+            ...completed.get(key).map(r => r.to)
+          ]
+          .map(id => compounds[id].formula)
+          .join(' → ');
+
+        $('comparison').innerHTML = `
+          <h2>Compare your completed routes</h2>
+          <div class="comparison-route">
+            Four-step sequence: ${routeText('four')}
+          </div>
+          <div class="comparison-route">
+            Two-step synthesis: ${routeText('two')}
+          </div>
+          <p>
+            The four-step sequence requires oxidation to an aldehyde
+            followed by reduction back to an alcohol. Without those
+            specified intermediates, ethene can be converted to
+            ethanoic acid in two steps.
+          </p>
+        `;
       }
 
-      function currentInventory() {
-        if (state.current === 0) return "Ethene (CH₂=CH₂) sample · structure scanner";
-        if (state.current === 1) return "Registered ethene (CH₂=CH₂) · H₂ · H₂O(g) · Br₂ · Ni · H₃PO₄";
-        if (state.current === 2) return "Ethane (CH₃CH₃) sample · Br₂ · UV station";
-        if (state.current === 3) return "Bromoethane (CH₃CH₂Br) sample · OH⁻ · H⁺ · Br₂";
-        return state.oxidationStage === 0 ? "Ethanol (CH₃CH₂OH) sample · acidified dichromate(VI)" : "Ethanol (CH₃CH₂OH) feed · ethanal (CH₃CHO) sample collected · excess oxidant";
-      }
+      function renderResult() {
+        const s = run();
+        const c = challenge();
+        const success = s.outcome === 'success';
 
-      function currentFinding() {
-        if (state.current === 0) return "No structural classification recorded yet.";
-        if (state.current === 1) return "Ethene (CH₂=CH₂) registered as an alkene: C=C controls its addition chemistry.";
-        if (state.current === 2) return "Hydrogenation consumed the π bond and added H₂: reduction confirmed.";
-        if (state.current === 3) return "UV initiation generated Br•; propagation produced bromoethane (CH₃CH₂Br).";
-        return state.oxidationStage === 0 ? "SN2 transfer replaced Br with OH and produced ethanol (CH₃CH₂OH)." : "Distillation isolated ethanal (CH₃CHO) before further oxidation.";
+        $('result').hidden = !s.outcome;
+        $('experiment').hidden = !!s.outcome;
+        $('hintButton').hidden = !!s.outcome;
+
+        if (!s.outcome) return;
+
+        let title;
+        let description;
+
+        if (success) {
+          title =
+            `${c.steps}-step challenge complete: ${compounds[c.target].name}.`;
+
+          description =
+            `Correct step count, target and required intermediates. Incorrect attempts: ${s.errors}${
+              s.hintUsed ? ' · Hint used' : ' · No hints used'
+            }.`;
+
+        } else if (s.outcome === 'requirement') {
+          title =
+            'Correct target, but the required intermediates are missing.';
+
+          description =
+            'Read the task again, then undo a step or restart this challenge.';
+
+        } else if (s.outcome === 'deadend') {
+          title =
+            'Valid reaction, but this route cannot reach the target.';
+
+          description =
+            'There is no further conversion from this product within the allowed reactions. Undo your last step.';
+
+        } else {
+          title =
+            `All ${c.steps} steps used; the target has not been reached.`;
+
+          description =
+            `Current product: ${compounds[current()].name}. Target: ${compounds[c.target].name}. Undo a step to revise your route.`;
+        }
+
+        const next = success
+          ? (
+            active === 'four'
+              ? '<button class="primary" type="button" data-action="next">Try the three-step challenge</button>'
+              : active === 'three'
+                ? '<button class="primary" type="button" data-action="next">Try the two-step challenge</button>'
+                : '<button class="primary" type="button" data-action="four">Return to four steps</button>'
+          )
+          : '<button class="primary" type="button" data-action="undo">Undo last step</button>';
+
+        $('result').className =
+          `result ${success ? '' : 'failed'}`;
+
+        $('result').innerHTML = `
+          ${success ? '<span class="badge">Route verified</span>' : ''}
+          <h2 id="resultTitle" tabindex="-1">${title}</h2>
+          <p>${description}</p>
+          <div class="button-group">
+            ${next}
+            <button class="secondary" type="button" data-action="reset">
+              Restart challenge
+            </button>
+          </div>
+        `;
       }
 
       function render() {
-        renderRail();
-        renderProgress();
-        state.success = false;
-        els.primary.dataset.action = "check";
-        els.primary.textContent = "Run station";
-        els.primary.disabled = false;
-        els.hintButton.hidden = false;
-        els.hintButton.disabled = state.clueUsed.has(state.current);
-        els.hintButton.textContent = state.clueUsed.has(state.current) ? "Clue used" : "Request one clue";
-        setFeedback("Station ready. Inspect the current sample and configure the next transformation.");
+        const s = run();
+        const c = challenge();
+        const p = compounds[current()];
 
-        if (state.completed.size === missions.length) {
-          renderVictory();
+        for (const [id, selected] of [
+          ['navFour', active === 'four'],
+          ['navShort', active !== 'four']
+        ]) {
+          if (selected) {
+            $(id).setAttribute('aria-current', 'page');
+          } else {
+            $(id).removeAttribute('aria-current');
+          }
+        }
+
+        $('challengePicker').hidden = active === 'four';
+
+        document.querySelectorAll('[data-challenge]').forEach(b => {
+          b.setAttribute(
+            'aria-pressed',
+            String(b.dataset.challenge === active)
+          );
+        });
+
+        $('threeCheck').textContent =
+          completed.has('three') ? '✓' : '';
+
+        $('twoCheck').textContent =
+          completed.has('two') ? '✓' : '';
+
+        $('completion').innerHTML =
+          `Completed <strong>${completed.size} / 3</strong>`;
+
+        $('eyebrow').textContent = c.kicker;
+
+        $('question').innerHTML =
+          `Convert ${compounds[c.start].name.toLowerCase()} to ${compounds[c.target].name.toLowerCase()}<br>in exactly <em>${c.steps} steps</em>.`;
+
+        $('description').textContent = c.description;
+
+        $('benchTitle').textContent =
+          `Step ${Math.min(s.history.length + 1, c.steps)} · Plan the next reaction`;
+
+        $('attempts').textContent =
+          `${c.steps - s.history.length} steps left · ${s.errors} incorrect attempts`;
+
+        $('sampleFormula').textContent = p.formula;
+        $('sampleName').textContent = `${p.name} · ${p.family}`;
+
+        document.querySelectorAll('[data-reagent]').forEach(b => {
+          b.setAttribute(
+            'aria-pressed',
+            String(b.dataset.reagent === s.selection.reagent)
+          );
+        });
+
+        $('condition').value = s.selection.condition;
+        $('product').value = s.selection.product;
+        $('undo').disabled = !s.history.length;
+
+        $('hint').hidden = !s.hintOpen;
+        $('hint').textContent = c.hint;
+
+        $('hintButton').setAttribute(
+          'aria-expanded',
+          String(s.hintOpen)
+        );
+
+        $('hintButton').textContent = s.hintOpen
+          ? 'Hide hint'
+          : s.hintUsed
+            ? 'Show hint again'
+            : 'Need a hint?';
+
+        feedback(s.feedback, s.feedbackType);
+        renderRoute();
+        renderLog();
+        renderResult();
+        renderComparison();
+      }
+
+      function submit(event) {
+        event.preventDefault();
+
+        const s = run();
+        const c = challenge();
+        const a = s.selection;
+
+        if (s.outcome) return;
+
+        if (!a.reagent || !a.condition || !a.product) {
+          feedback(
+            'Choose all three: reagent, conditions and predicted product.',
+            'error'
+          );
           return;
         }
 
-        const mission = missions[state.current];
-        els.missionKicker.textContent = mission.topic;
-        els.missionTitle.textContent = mission.title;
-        els.missionDescription.textContent = mission.description;
-        els.objective.textContent = mission.objective;
-        els.inventory.textContent = currentInventory();
-        els.finding.textContent = currentFinding();
+        const normaliseCondition = value =>
+          value === 'refluxheat' ? 'reflux' : value;
 
-        [renderMissionOne, renderMissionTwo, renderMissionThree, renderMissionFour, renderMissionFive][state.current]();
-      }
+        const match = reactions.find(r =>
+          r.from === current() &&
+          r.r === a.reagent &&
+          normaliseCondition(r.c) === normaliseCondition(a.condition) &&
+          r.to === a.product
+        );
 
-      function markMissionComplete(explanation) {
-        state.completed.add(state.current);
-        state.success = true;
-        setFeedback(explanation, "success");
-        els.primary.textContent = state.current === missions.length - 1 ? "Complete route" : "Transfer sample";
-        els.primary.dataset.action = "next";
-        renderRail();
-        renderProgress();
-      }
+        const r = match
+          ? {...match, c: a.condition}
+          : null;
 
-      function checkCurrent() {
-        if (state.current === 0) {
-          if (!state.structureFeature) return setFeedback("Tag one feature directly on the displayed structure.", "error");
-          if (state.structureFeature === "double") return markMissionComplete("C=C registered. The π bond makes the sample unsaturated and classifies it as an alkene.");
-          return setFeedback("The carbon atoms form the backbone, but the C=C bond is the feature that defines alkene reactivity.", "error");
-        }
-
-        if (state.current === 1) {
-          const { reagent, catalyst } = state.hydrogenation;
-          if (!reagent || !catalyst) return setFeedback("The reactor requires both a reagent feed and a catalyst bed.", "error");
-          if (reagent === "h2" && catalyst === "ni") return markMissionComplete("Reactor output: ethane (CH₃CH₃). H₂ added across C=C on Ni; the π bond was consumed, so reduction is confirmed.");
-          if (reagent === "steam" && catalyst === "acid") return setFeedback("That configuration hydrates ethene (CH₂=CH₂) to ethanol (CH₃CH₂OH), so it skips the ethane (CH₃CH₃) feed required by the next station.", "error");
-          if (reagent === "br2") return setFeedback("Br₂ adds across C=C to form a dibromoalkane; it does not supply the ethane (CH₃CH₃) sample required next.", "error");
-          return setFeedback("The selected catalyst does not activate this reagent for hydrogenation. Reconfigure the reactor.", "error");
-        }
-
-        if (state.current === 2) {
-          if (state.radicalStage === 0) {
-            if (!state.uvOn) return setFeedback("Initiation cannot start while the UV lamp is off; Br₂ remains intact.", "error");
-            state.radicalStage = 1;
-            renderMissionThree();
-            setFeedback("Initiation complete: Br₂ underwent homolytic fission to form two Br• radicals.", "success");
-            return;
-          }
-          if (state.radicalSequence.length < 2) return setFeedback("Load two equations before running propagation.", "error");
-          if (state.radicalSequence[0] === "prop1" && state.radicalSequence[1] === "prop2") return markMissionComplete("Chain sustained: the first step created C₂H₅•, the second formed bromoethane (CH₃CH₂Br) and regenerated Br•.");
-          if (state.radicalSequence.includes("term")) return setFeedback("A termination equation removes radicals; it cannot sustain the chain. Remove it from the propagation slots.", "error");
-          if (state.radicalSequence.includes("overall")) return setFeedback("The overall equation hides the radical transfer. Load the two elementary propagation steps instead.", "error");
-          return setFeedback("Both propagation equations are present, but their order breaks continuity. The radical formed in step 1 must be consumed in step 2.", "error");
-        }
-
-        if (state.current === 3) {
-          if (state.pairStage === 0) {
-            if (!state.pairReagent) return setFeedback("Select one reagent from the tray before loading the station.", "error");
-            if (state.pairReagent !== "oh") return setFeedback("The selected species will not donate the electron pair needed to form the C—O bond.", "error");
-            state.pairStage = 1;
-            renderMissionFour();
-            setFeedback("OH⁻ loaded. Account for the two electron-pair movements before running substitution.", "success");
-            return;
-          }
-          if (state.mechanismStep < 2) return setFeedback("The electron ledger is incomplete. Build both curly arrows before running the SN2 step.", "error");
-          return markMissionComplete("SN2 transfer complete: OH⁻ donated a lone pair to Cδ+ while the C—Br pair moved to Br, producing ethanol (CH₃CH₂OH) and Br⁻.");
-        }
-
-        if (state.current === 4) {
-          const { amount, setup } = state.oxidation;
-          if (!amount || !setup) return setFeedback("Set both the oxidant charge and the apparatus before starting the oxidation.", "error");
-          if (state.oxidationStage === 0) {
-            if (amount === "limited" && setup === "distillation") {
-              state.oxidationStage = 1;
-              state.oxidation = { amount: null, setup: null };
-              renderMissionFive();
-              els.inventory.textContent = currentInventory();
-              els.finding.textContent = currentFinding();
-              setFeedback("Oxidation A complete: volatile ethanal (CH₃CHO) was distilled from the mixture before further oxidation.", "success");
-              return;
-            }
-            if (setup === "reflux") return setFeedback("The aldehyde remained in contact with oxidant and continued beyond the requested intermediate.", "error");
-            return setFeedback("The excess oxidant makes further oxidation likely. The ethanal (CH₃CHO) order requires tighter control.", "error");
-          }
-          if (amount === "excess" && setup === "reflux") return markMissionComplete("Oxidation B complete: reflux retained the mixture with excess oxidant until ethanoic acid (CH₃COOH) formed.");
-          if (setup === "distillation") return setFeedback("Distillation removes ethanal (CH₃CHO) before it can reach the carboxylic-acid oxidation level.", "error");
-          return setFeedback("A limited oxidant charge cannot reliably drive the route to ethanoic acid (CH₃COOH).", "error");
-        }
-      }
-
-      function showHint() {
-        if (state.clueUsed.has(state.current)) return;
-        const messages = [
-          "Classification depends on the multiple-bond pattern, not simply the number of carbon atoms.",
-          "Hydrogenation needs molecular hydrogen activated on a metal surface.",
-          state.radicalStage === 0 ? "Initiation splits Br₂ equally; the energy input is photochemical." : "A propagation step consumes one radical and produces another.",
-          state.pairStage === 0 ? "The incoming reagent must be able to donate a lone pair." : "Every curly arrow begins at an electron pair and ends where that pair moves.",
-          state.oxidationStage === 0 ? "The intermediate must leave the oxidizing mixture as soon as it forms." : "Complete oxidation requires the sample to remain with excess oxidant."
-        ];
-        state.clueUsed.add(state.current);
-        els.hintButton.disabled = true;
-        els.hintButton.textContent = "Clue used";
-        setFeedback(`Clue: ${messages[state.current]}`);
-      }
-
-      function nextMission() {
-        if (state.completed.size === missions.length) {
+        if (!r) {
+          s.errors++;
+          s.feedback =
+            'This combination does not match a reaction in the notes used for this challenge. Check your choices; no step has been used.';
+          s.feedbackType = 'error';
           render();
           return;
         }
-        const next = missions.findIndex((_, index) => !state.completed.has(index));
-        state.current = next === -1 ? missions.length - 1 : next;
-        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        s.history.push(r);
+
+        s.selection = {
+          reagent: '',
+          condition: '',
+          product: ''
+        };
+
+        s.feedback = `Valid reaction: ${nameOf(r.to)} formed. `;
+        s.feedbackType = 'success';
+
+        if (s.history.length === c.steps) {
+          s.outcome = r.to !== c.target
+            ? 'limit'
+            : requirementsMet()
+              ? 'success'
+              : 'requirement';
+
+        } else if (!reactions.some(next => next.from === r.to)) {
+          s.outcome = 'deadend';
+
+        } else if (r.to === c.target) {
+          s.feedback +=
+            'Continue to complete the required steps and intermediates.';
+        }
+
+        if (s.outcome === 'success') {
+          completed.set(active, [...s.history]);
+        }
+
         render();
+
+        if (s.outcome) {
+          $('resultTitle').focus();
+        }
       }
 
-      function resetAll() {
-        state.current = 0;
-        state.completed.clear();
-        state.success = false;
-        state.structureFeature = null;
-        state.hydrogenation = { reagent: null, catalyst: null };
-        state.radicalStage = 0;
-        state.uvOn = false;
-        state.radicalSequence = [];
-        state.pairStage = 0;
-        state.pairReagent = null;
-        state.mechanismStep = 0;
-        state.mechanismDraft = [];
-        state.oxidationStage = 0;
-        state.oxidation = { amount: null, setup: null };
-        state.clueUsed.clear();
-        window.scrollTo({ top: 0, left: 0 });
+      function undo() {
+        const s = run();
+
+        if (!s.history.length) return;
+
+        const last = s.history.pop();
+        s.outcome = null;
+
+        s.selection = {
+          reagent: last.r,
+          condition: last.c,
+          product: last.to
+        };
+
+        s.feedback =
+          'Last step undone. Adjust your choices and submit again.';
+        s.feedbackType = '';
+
         render();
-        toast("Reaction route reset");
+        $('benchTitle').scrollIntoView({block: 'nearest'});
       }
 
-      els.missionList.addEventListener("click", event => {
-        const button = event.target.closest("[data-mission]");
-        if (!button || button.disabled) return;
-        state.current = Number(button.dataset.mission);
+      function reset() {
+        runs[active] = fresh();
+        render();
+        $('question').focus();
+      }
+
+      function navigate(id) {
+        const hash = id === 'four'
+          ? '#four'
+          : id === 'two'
+            ? '#two'
+            : '#short';
+
+        if (location.hash === hash) {
+          active = id;
+          render();
+          $('question').focus();
+        } else {
+          location.hash = hash;
+        }
+      }
+
+      function readLocation(focus = false) {
+        active = location.hash === '#two'
+          ? 'two'
+          : location.hash === '#short'
+            ? 'three'
+            : 'four';
+
+        render();
+
+        if (focus) {
+          $('question').focus();
+        }
+      }
+
+      $('reactionForm').addEventListener('submit', submit);
+
+      $('reagents').addEventListener('click', event => {
+        const b = event.target.closest('[data-reagent]');
+        if (!b) return;
+
+        run().selection.reagent = b.dataset.reagent;
+
+        document.querySelectorAll('[data-reagent]').forEach(el => {
+          el.setAttribute('aria-pressed', String(el === b));
+        });
+
+        feedback('Set the conditions, predict the product, then submit.');
+      });
+
+      $('condition').addEventListener('change', event => {
+        run().selection.condition = event.target.value;
+        feedback('Set the conditions, predict the product, then submit.');
+      });
+
+      $('product').addEventListener('change', event => {
+        run().selection.product = event.target.value;
+        feedback('Set the conditions, predict the product, then submit.');
+      });
+
+      $('undo').addEventListener('click', undo);
+      $('reset').addEventListener('click', reset);
+
+      $('hintButton').addEventListener('click', () => {
+        run().hintOpen = !run().hintOpen;
+        run().hintUsed = true;
         render();
       });
 
-      els.bench.addEventListener("click", event => {
-        const featureButton = event.target.closest("[data-feature]");
-        if (featureButton) {
-          state.structureFeature = featureButton.dataset.feature;
-          renderMissionOne();
-          setFeedback("Feature tagged. Register it when you are ready to commit the classification.");
-          return;
-        }
+      $('challengePicker').addEventListener('click', event => {
+        const b = event.target.closest('[data-challenge]');
+        if (b) navigate(b.dataset.challenge);
+      });
 
-        const control = event.target.closest("[data-control]");
-        if (control) {
-          const group = control.dataset.control;
-          const value = control.dataset.value;
-          if (group === "h-reagent") state.hydrogenation.reagent = value;
-          if (group === "h-catalyst") state.hydrogenation.catalyst = value;
-          if (group === "pair-reagent") state.pairReagent = value;
-          if (group === "ox-amount") state.oxidation.amount = value;
-          if (group === "ox-setup") state.oxidation.setup = value;
-          [renderMissionOne, renderMissionTwo, renderMissionThree, renderMissionFour, renderMissionFive][state.current]();
-          setFeedback("Station control updated. Check the full configuration before running.");
-          return;
-        }
+      $('result').addEventListener('click', event => {
+        const action =
+          event.target.closest('[data-action]')?.dataset.action;
 
-        const uvButton = event.target.closest("[data-uv]");
-        if (uvButton) {
-          state.uvOn = !state.uvOn;
-          renderMissionThree();
-          setFeedback(state.uvOn ? "UV lamp on. The photochemical initiation channel is available." : "UV lamp off. Radical production has stopped.");
-          return;
-        }
+        if (action === 'undo') undo();
+        if (action === 'reset') reset();
+        if (action === 'four') navigate('four');
 
-        const radicalButton = event.target.closest("[data-radical-prop]");
-        if (radicalButton && state.radicalSequence.length < 2) {
-          state.radicalSequence.push(radicalButton.dataset.radicalProp);
-          renderMissionThree();
-          setFeedback(`${state.radicalSequence.length}/2 propagation slots loaded.`);
-          return;
-        }
-
-        if (event.target.closest("#undoRadical")) {
-          state.radicalSequence.pop();
-          renderMissionThree();
-          setFeedback("Last equation removed.");
-          return;
-        }
-
-        const electronNode = event.target.closest("[data-electron-node]");
-        if (electronNode && state.current === 3 && state.pairStage === 1 && state.mechanismStep < 2) {
-          const value = electronNode.dataset.electronNode;
-          if (state.mechanismDraft.includes(value)) return setFeedback("Choose a different destination for this electron pair.", "error");
-          state.mechanismDraft.push(value);
-          if (state.mechanismDraft.length === 1) {
-            renderMissionFour();
-            setFeedback("Electron source selected. Now select where that pair moves.");
-            return;
-          }
-          const expected = state.mechanismStep === 0 ? ["lonepair", "carbon"] : ["cbr", "bromine"];
-          const correct = state.mechanismDraft[0] === expected[0] && state.mechanismDraft[1] === expected[1];
-          state.mechanismDraft = [];
-          if (correct) {
-            state.mechanismStep += 1;
-            renderMissionFour();
-            setFeedback(state.mechanismStep === 1 ? "First arrow recorded: the OH⁻ lone pair forms the C—O bond." : "Second arrow recorded: the C—Br pair moves to Br. Electron ledger complete.", "success");
-          } else {
-            renderMissionFour();
-            setFeedback("That arrow does not follow an electron pair from its source to its destination. Try the current arrow again.", "error");
-          }
+        if (action === 'next') {
+          navigate(active === 'four' ? 'three' : 'two');
         }
       });
 
-      els.primary.addEventListener("click", () => {
-        const action = els.primary.dataset.action;
-        if (action === "next") nextMission();
-        else if (action === "reset") resetAll();
-        else checkCurrent();
-      });
-
-      els.hintButton.addEventListener("click", showHint);
-
-      els.reset.addEventListener("click", () => {
-        if (state.completed.size === 0 || window.confirm("Reset all five connected stations?")) resetAll();
-      });
-
-      render();
+      window.addEventListener('hashchange', () => readLocation(true));
+      readLocation();
     })();
   </script>
 </body>
